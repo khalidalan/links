@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مولد الروابط التعليمية المحسن</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --primary-hover: #0056b3;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --light-bg: #f8f9fa;
+            --border-color: #dee2e6;
+            --text-color: #212529;
+            --text-muted: #6c757d;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --border-radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 35px;
+            border: 1px solid var(--border-color);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .history-container {
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+            padding-right: 15px; /* For scrollbar */
+        }
+        
+        .history-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .history-container::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 10px;
+        }
+
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-color);
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            background-color: #fdfdff;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 123, 255, 0.2);
+        }
+        
+        .btn-secondary {
+             background: var(--secondary-color);
+             color: white;
+             margin-top: 15px;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+
+        .results {
+            display: none;
+            margin-top: 30px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .results h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .link-item {
+            background: var(--light-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .link-label {
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .link-value {
+            background: var(--card-bg);
+            padding: 10px 15px;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: var(--text-color);
+            word-break: break-all;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .copy-btn {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 5px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+            margin-right: 15px;
+        }
+
+        .copy-btn:hover {
+            background: #e9ecef;
+            color: var(--text-color);
+        }
+
+        .copy-btn.copied {
+            background: var(--success-color);
+            border-color: var(--success-color);
+            color: white;
+        }
+
+        /* History Styles */
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .history-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .history-count {
+            background: var(--primary-color);
+            color: white;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 25px;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+        }
+
+
+        .history-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-right: 4px solid var(--primary-color);
+            transition: all 0.2s ease-in-out;
+        }
+
+        .history-item:hover {
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+            transform: translateY(-3px);
+            border-right-color: var(--primary-hover);
+        }
+
+        .history-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .history-item-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--primary-color);
+        }
+
+        .history-item-date {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            margin-right: 15px;
+        }
+        
+        .history-item-details {
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: var(--light-bg);
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .history-item-details p {
+            margin-bottom: 8px;
+        }
+         .history-item-details p:last-child {
+            margin-bottom: 0;
+        }
+
+        .history-item-details strong {
+            color: var(--text-color);
+            min-width: 70px;
+            display: inline-block;
+        }
+        
+        .history-links {
+             margin-top: 15px;
+        }
+
+        .history-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+        }
+
+        .action-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 700;
+            transition: all 0.2s ease;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .use-again-btn {
+            background: var(--success-color);
+            color: white;
+        }
+        .use-again-btn:hover {
+            background: #218838;
+        }
+
+        .delete-btn {
+            background: var(--danger-color);
+            color: white;
+        }
+        .delete-btn:hover {
+            background: #c82333;
+        }
+
+        .clear-history-btn {
+            background: var(--danger-color);
+        }
+        
+        .clear-history-btn:hover {
+            background: #c82333;
+        }
+
+        .no-history {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 50px 20px;
+            background-color: #f8f9fa;
+            border: 2px dashed var(--border-color);
+            border-radius: var(--border-radius);
+        }
+
+        @media (max-width: 1200px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+            .history-container {
+                max-height: 600px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="card">
+            <div class="header">
+                <h1>🔗 مولد الروابط التعليمية</h1>
+                <p>أدخل بيانات المسار لإنشاء الروابط تلقائياً</p>
+            </div>
+
+            <form id="linkForm">
+                <div class="form-group">
+                    <label for="trackName">اسم المسار (Track Name)</label>
+                    <input type="text" id="trackName" placeholder="مثال: ai" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="courseName">اسم الدورة (Course Name)</label>
+                    <input type="text" id="courseName" placeholder="مثال: intro-to-ai" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="lessonName">اسم القسم (Section Name)</label>
+                    <input type="text" id="lessonName" placeholder="مثال: practical-applications" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="topicName">اسم الدرس (Topic Name)</label>
+                    <input type="text" id="topicName" placeholder="مثال: traditional-vs-generative-ai" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">🚀 إنشاء الروابط</button>
+            </form>
+
+            <div id="results" class="results">
+                <h3>📋 الروابط التي تم إنشاؤها:</h3>
+                <div id="linksContainer"></div>
+                <button id="clearBtn" class="btn btn-secondary">🗑️ مسح النتائج</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="history-header">
+                <h2 class="history-title">📚 سجل الروابط</h2>
+                <span class="history-count" id="historyCount">0</span>
+            </div>
+
+            <input type="text" class="search-box" id="searchBox" placeholder="🔍 ابحث في السجل...">
+            
+            <div class="history-container" id="historyContainer">
+                <div class="no-history">
+                    <p>لم يتم إنشاء أي روابط بعد 📝</p>
+                </div>
+            </div>
+            
+            <button id="clearHistoryBtn" class="btn clear-history-btn" style="display: none; margin-top: 20px;">مسح السجل بالكامل</button>
+        </div>
+    </div>
+
+    <script>
+        let linkHistory = [];
+
+        // Load history from localStorage on page load
+        function loadHistory() {
+            const savedHistory = localStorage.getItem('linkGeneratorHistory');
+            if (savedHistory) {
+                linkHistory = JSON.parse(savedHistory).map(item => ({
+                    ...item,
+                    timestamp: new Date(item.timestamp) // Convert string back to Date object
+                }));
+            }
+            updateHistoryDisplay();
+        }
+        
+        // Save history to localStorage
+        function persistHistory() {
+            localStorage.setItem('linkGeneratorHistory', JSON.stringify(linkHistory));
+        }
+
+        function generateLinks(trackName, courseName, lessonName, topicName) {
+            const baseTopic = `tracks/${trackName}/courses/${courseName}/lessons/${lessonName}/topics`;
+            const baseLesson = `tracks/${trackName}/courses/${courseName}/lessons/${lessonName}`;
+            
+            const topic = `${baseTopic}/${topicName}`;
+            const summary = `${baseTopic}/short-summary-${topicName}`;
+            const quizTopic = `${summary}/quizzes/short-quiz-${topicName}`;
+            const quizLesson = `${baseLesson}/quizzes/quiz-${lessonName}`;
+            
+            return {
+                "رابط القسم (Section)": baseLesson, // <-- هذا هو الرابط الجديد الذي تمت إضافته
+                "الموضوع (Topic)": topic,
+                "الملخص (Summary)": summary,
+                "اختبار الموضوع (Topic Quiz)": quizTopic,
+                "اختبار القسم (Section Quiz)": quizLesson
+            };
+        }
+
+        function createLinkElement(label, link) {
+            return `
+                <div class="link-item">
+                    <div class="link-label">${label}</div>
+                    <div class="link-value">
+                        <span>${link}</span>
+                        <button class="copy-btn" onclick="copyToClipboard(this, '${link}')">نسخ</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function copyToClipboard(button, text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = '✓ تم النسخ';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('فشل في النسخ:', err);
+                 // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                button.textContent = '✓ تم النسخ';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.textContent = 'نسخ';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        function saveToHistory(trackName, courseName, lessonName, topicName, links) {
+            const historyItem = {
+                id: Date.now(),
+                timestamp: new Date(),
+                trackName,
+                courseName,
+                lessonName,
+                topicName,
+                links
+            };
+
+            linkHistory.unshift(historyItem);
+            persistHistory(); // Save to localStorage
+            updateHistoryDisplay();
+        }
+
+        function updateHistoryDisplay() {
+            const historyContainer = document.getElementById('historyContainer');
+            const historyCount = document.getElementById('historyCount');
+            const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+
+            historyCount.textContent = linkHistory.length;
+
+            if (linkHistory.length === 0) {
+                historyContainer.innerHTML = '<div class="no-history"><p>لم يتم إنشاء أي روابط بعد 📝</p></div>';
+                clearHistoryBtn.style.display = 'none';
+                return;
+            }
+
+            clearHistoryBtn.style.display = 'flex';
+
+            const searchQuery = document.getElementById('searchBox').value.toLowerCase();
+            const filteredHistory = linkHistory.filter(item => 
+                Object.values(item).some(value => 
+                    typeof value === 'string' && value.toLowerCase().includes(searchQuery)
+                )
+            );
+
+            historyContainer.innerHTML = filteredHistory.map(item => `
+                <div class="history-item">
+                    <div class="history-item-header">
+                        <div>
+                           <div class="history-item-title">${item.courseName}</div>
+                           <div class="history-item-date">${item.timestamp.toLocaleDateString('ar-EG')} - ${item.timestamp.toLocaleTimeString('ar-EG', {hour: '2-digit', minute: '2-digit'})}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="history-item-details">
+                       <p><strong>المسار:</strong> ${item.trackName}</p>
+                       <p><strong>الدورة:</strong> ${item.courseName}</p>
+                       <p><strong>القسم:</strong> ${item.lessonName}</p>
+                       <p><strong>الدرس:</strong> ${item.topicName}</p>
+                    </div>
+                    
+                    <div class="history-links">
+                        ${Object.entries(item.links).map(([label, link]) => createLinkElement(label, link)).join('')}
+                    </div>
+                    
+                    <div class="history-actions">
+                        <button class="action-btn use-again-btn" onclick="useAgain(${item.id})">🔄 استخدام مجددًا</button>
+                        <button class="action-btn delete-btn" onclick="deleteHistoryItem(${item.id})">❌ حذف</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function useAgain(itemId) {
+            const item = linkHistory.find(h => h.id === itemId);
+            if (item) {
+                document.getElementById('trackName').value = item.trackName;
+                document.getElementById('courseName').value = item.courseName;
+                document.getElementById('lessonName').value = item.lessonName;
+                document.getElementById('topicName').value = item.topicName;
+                
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                document.getElementById('trackName').focus();
+            }
+        }
+
+        function deleteHistoryItem(itemId) {
+            if (confirm('هل أنت متأكد من حذف هذا العنصر من السجل؟')) {
+                linkHistory = linkHistory.filter(h => h.id !== itemId);
+                persistHistory();
+                updateHistoryDisplay();
+            }
+        }
+
+        function displayCurrentResults(links) {
+            const linksContainer = document.getElementById('linksContainer');
+            const resultsDiv = document.getElementById('results');
+            
+            linksContainer.innerHTML = Object.entries(links).map(([label, link]) => createLinkElement(label, link)).join('');
+            
+            resultsDiv.style.display = 'block';
+            resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
+
+        document.getElementById('linkForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const trackName = document.getElementById('trackName').value.trim();
+            const courseName = document.getElementById('courseName').value.trim();
+            const lessonName = document.getElementById('lessonName').value.trim();
+            const topicName = document.getElementById('topicName').value.trim();
+            
+            if (!trackName || !courseName || !lessonName || !topicName) {
+                alert('يرجى ملء جميع الحقول المطلوبة');
+                return;
+            }
+            
+            const links = generateLinks(trackName, courseName, lessonName, topicName);
+            displayCurrentResults(links);
+            saveToHistory(trackName, courseName, lessonName, topicName, links);
+        });
+
+        document.getElementById('clearBtn').addEventListener('click', function() {
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('linksContainer').innerHTML = '';
+        });
+
+        document.getElementById('clearHistoryBtn').addEventListener('click', function() {
+            if (confirm('هل أنت متأكد من مسح جميع عناصر السجل؟ لا يمكن التراجع عن هذا الإجراء.')) {
+                linkHistory = [];
+                persistHistory();
+                updateHistoryDisplay();
+            }
+        });
+
+        document.getElementById('searchBox').addEventListener('input', updateHistoryDisplay);
+
+        // Initialize on page load
+        window.addEventListener('load', loadHistory);
+    </script>
+</body>
+</html>
