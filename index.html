@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مولد الروابط التعليمية</title>
+    <title>Educational Links Generator</title>
     <style>
         * {
             margin: 0;
@@ -11,57 +11,150 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --bg-primary: #0f0f1e;
+            --bg-secondary: #1a1a2e;
+            --bg-tertiary: #16213e;
+            --accent-primary: #6c63ff;
+            --accent-secondary: #4a47a3;
+            --accent-tertiary: #3b82f6;
+            --text-primary: #e4e4e7;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --border-color: #27272a;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --card-bg: rgba(26, 26, 46, 0.8);
+            --card-border: rgba(108, 99, 255, 0.2);
+            --hover-bg: rgba(108, 99, 255, 0.1);
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
             min-height: 100vh;
             padding: 20px;
-            color: #333;
+            color: var(--text-primary);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(108, 99, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(74, 71, 163, 0.1) 0%, transparent 50%);
+            animation: gradientShift 15s ease infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(5%, 5%) rotate(180deg); }
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
 
         .header {
             text-align: center;
-            color: white;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
             animation: fadeInDown 0.6s ease;
         }
 
-        .header h1 {
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header-top h1 {
             font-size: 2.5em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .lang-toggle {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 50px;
+            padding: 8px;
+            display: flex;
+            gap: 5px;
+            backdrop-filter: blur(10px);
+        }
+
+        .lang-btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 50px;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .lang-btn.active {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.4);
+        }
+
+        .lang-btn:hover:not(.active) {
+            color: var(--text-primary);
         }
 
         .header p {
             font-size: 1.1em;
-            opacity: 0.9;
+            color: var(--text-secondary);
         }
 
         .main-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid var(--card-border);
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
             animation: fadeInUp 0.6s ease;
         }
 
         .form-section {
-            margin-bottom: 30px;
+            margin-bottom: 35px;
         }
 
         .form-section h2 {
-            color: #667eea;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 20px;
             font-size: 1.5em;
             display: flex;
             align-items: center;
             gap: 10px;
+            font-weight: 700;
         }
 
         .form-grid {
@@ -74,82 +167,95 @@
         .input-group {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
         }
 
         .input-group label {
             font-weight: 600;
-            color: #555;
+            color: var(--text-secondary);
             font-size: 0.95em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .required {
+            color: var(--danger);
         }
 
         .input-group input {
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
+            padding: 14px 18px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
             font-size: 1em;
             transition: all 0.3s ease;
-            background: white;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-family: 'Monaco', 'Courier New', monospace;
         }
 
         .input-group input:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 4px rgba(108, 99, 255, 0.15);
+            background: var(--bg-tertiary);
         }
 
         .input-group input::placeholder {
-            color: #aaa;
+            color: var(--text-muted);
         }
 
         .checkbox-group {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 12px;
             margin-top: 15px;
         }
 
         .checkbox-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 12px;
-            background: #f8f9ff;
-            border-radius: 8px;
+            gap: 12px;
+            padding: 14px 16px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
             cursor: pointer;
             transition: all 0.3s ease;
-            border: 2px solid transparent;
+            border: 2px solid var(--border-color);
         }
 
         .checkbox-item:hover {
-            background: #eef1ff;
-            border-color: #667eea;
+            background: var(--hover-bg);
+            border-color: var(--accent-primary);
+            transform: translateX(-3px);
         }
 
         .checkbox-item input[type="checkbox"] {
             width: 20px;
             height: 20px;
             cursor: pointer;
-            accent-color: #667eea;
+            accent-color: var(--accent-primary);
         }
 
         .checkbox-item label {
             cursor: pointer;
             user-select: none;
             font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.95em;
         }
 
         .action-buttons {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             flex-wrap: wrap;
-            margin-top: 20px;
+            margin-top: 25px;
         }
 
         .btn {
             padding: 14px 28px;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 1em;
             font-weight: 600;
             cursor: pointer;
@@ -157,126 +263,163 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn span {
+            position: relative;
+            z-index: 1;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
             color: white;
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 6px 25px rgba(108, 99, 255, 0.5);
         }
 
         .btn-secondary {
-            background: #f0f0f0;
-            color: #333;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
         }
 
         .btn-secondary:hover {
-            background: #e0e0e0;
+            background: var(--bg-tertiary);
+            border-color: var(--accent-primary);
             transform: translateY(-2px);
         }
 
         .btn-success {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            background: linear-gradient(135deg, var(--success), #059669);
             color: white;
         }
 
         .btn-success:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(56, 239, 125, 0.4);
+            box-shadow: 0 6px 25px rgba(16, 185, 129, 0.5);
         }
 
         .preview-section {
-            background: #f8f9ff;
-            border-radius: 15px;
-            padding: 20px;
-            margin-top: 30px;
-            border: 2px solid #e0e7ff;
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 25px;
+            margin-top: 35px;
+            border: 1px solid var(--card-border);
         }
 
         .preview-section h3 {
-            color: #667eea;
-            margin-bottom: 15px;
-            font-size: 1.3em;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            font-weight: 700;
         }
 
         .links-container {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 15px;
         }
 
         .link-category {
-            background: white;
-            border-radius: 10px;
-            padding: 15px;
-            border-right: 4px solid #667eea;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 20px;
+            border-right: 4px solid var(--accent-primary);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         .link-category h4 {
-            color: #764ba2;
-            margin-bottom: 10px;
+            color: var(--accent-tertiary);
+            margin-bottom: 15px;
             font-size: 1.1em;
+            font-weight: 700;
         }
 
         .link-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px;
-            background: #f8f9ff;
-            border-radius: 8px;
-            margin-bottom: 8px;
+            gap: 12px;
+            padding: 12px 14px;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            margin-bottom: 10px;
             transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
         }
 
         .link-item:hover {
-            background: #eef1ff;
+            background: var(--hover-bg);
+            border-color: var(--accent-primary);
             transform: translateX(-5px);
         }
 
         .link-text {
             flex: 1;
-            font-family: monospace;
-            font-size: 0.9em;
-            color: #555;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.85em;
+            color: var(--text-secondary);
             word-break: break-all;
         }
 
         .copy-btn {
-            padding: 8px 15px;
-            background: #667eea;
+            padding: 8px 16px;
+            background: var(--accent-primary);
             color: white;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 0.85em;
             transition: all 0.3s ease;
             white-space: nowrap;
+            font-weight: 600;
         }
 
         .copy-btn:hover {
-            background: #764ba2;
+            background: var(--accent-secondary);
             transform: scale(1.05);
         }
 
         .copy-btn.copied {
-            background: #38ef7d;
+            background: var(--success);
         }
 
         .empty-state {
             text-align: center;
-            padding: 40px;
-            color: #999;
+            padding: 50px;
+            color: var(--text-muted);
         }
 
         .empty-state-icon {
-            font-size: 3em;
+            font-size: 4em;
             margin-bottom: 15px;
+            opacity: 0.5;
         }
 
         .toast {
@@ -284,14 +427,17 @@
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
-            background: #323232;
-            color: white;
-            padding: 15px 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            padding: 16px 28px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
             opacity: 0;
             transition: all 0.3s ease;
             z-index: 1000;
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(10px);
+            font-weight: 600;
         }
 
         .toast.show {
@@ -322,149 +468,185 @@
         }
 
         .history-section {
-            margin-top: 30px;
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            border: 2px solid #e0e7ff;
+            margin-top: 35px;
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid var(--card-border);
         }
 
         .history-section h3 {
-            color: #667eea;
-            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            font-weight: 700;
         }
 
         .history-item {
-            background: #f8f9ff;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
+            background: var(--bg-tertiary);
+            padding: 16px;
+            border-radius: 10px;
+            margin-bottom: 12px;
             cursor: pointer;
             transition: all 0.3s ease;
-            border-right: 4px solid #667eea;
+            border-right: 4px solid var(--accent-primary);
+            border: 1px solid var(--border-color);
         }
 
         .history-item:hover {
-            background: #eef1ff;
+            background: var(--hover-bg);
+            border-color: var(--accent-primary);
             transform: translateX(-5px);
         }
 
         .history-item-title {
             font-weight: 600;
-            color: #333;
-            margin-bottom: 5px;
+            color: var(--text-primary);
+            margin-bottom: 6px;
         }
 
         .history-item-info {
             font-size: 0.85em;
-            color: #666;
+            color: var(--text-secondary);
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-primary);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-secondary);
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🔗 مولد الروابط التعليمية المحسّن</h1>
-            <p>أداة ذكية لإنشاء روابط دورات المدرسة بسهولة وسرعة</p>
+            <div class="header-top">
+                <h1 id="mainTitle">🔗 Educational Links Generator</h1>
+                <div class="lang-toggle">
+                    <button class="lang-btn active" onclick="switchLang('en')">EN</button>
+                    <button class="lang-btn" onclick="switchLang('ar')">AR</button>
+                </div>
+            </div>
+            <p id="subtitle">Smart tool for creating Almdrasa course links easily and quickly</p>
         </div>
 
         <div class="main-card">
             <div class="form-section">
-                <h2>📚 المعلومات الأساسية</h2>
+                <h2 id="basicInfoTitle">📚 Basic Information</h2>
                 <div class="form-grid">
                     <div class="input-group">
-                        <label for="track">المسار (Track) *</label>
+                        <label for="track">
+                            <span id="trackLabel">Track</span>
+                            <span class="required">*</span>
+                        </label>
                         <input type="text" id="track" placeholder="programming-foundations" required>
                     </div>
                     <div class="input-group">
-                        <label for="course">الدورة (Course) *</label>
+                        <label for="course">
+                            <span id="courseLabel">Course</span>
+                            <span class="required">*</span>
+                        </label>
                         <input type="text" id="course" placeholder="fundamentals" required>
                     </div>
                 </div>
                 <div class="form-grid">
                     <div class="input-group">
-                        <label for="lesson">الدرس (Lesson)</label>
+                        <label for="lesson" id="lessonLabel">Section</label>
                         <input type="text" id="lesson" placeholder="programming-basics">
                     </div>
                     <div class="input-group">
-                        <label for="topic">الموضوع (Topic)</label>
+                        <label for="topic" id="topicLabel">Video</label>
                         <input type="text" id="topic" placeholder="what-is-programming">
                     </div>
                 </div>
             </div>
 
             <div class="form-section">
-                <h2>⚙️ أنواع الروابط المطلوبة</h2>
-                <div class="checkbox-group">
+                <h2 id="linkTypesTitle">⚙️ Required Link Types</h2>
+                <div class="checkbox-group" id="checkboxGroup">
                     <div class="checkbox-item">
                         <input type="checkbox" id="type-course" value="course" checked>
-                        <label for="type-course">صفحة الدورة الرئيسية</label>
+                        <label for="type-course" data-en="Course Main Page" data-ar="صفحة الدورة الرئيسية">Course Main Page</label>
                     </div>
                     <div class="checkbox-item">
                         <input type="checkbox" id="type-intro" value="intro">
-                        <label for="type-intro">مقدمة الدورة</label>
+                        <label for="type-intro" data-en="Course Introduction" data-ar="مقدمة الدورة">Course Introduction</label>
                     </div>
                     <div class="checkbox-item">
                         <input type="checkbox" id="type-lesson" value="lesson">
-                        <label for="type-lesson">صفحة القسم</label>
+                        <label for="type-lesson" data-en="Section Page" data-ar="صفحة القسم">Section Page</label>
                     </div>
                     <div class="checkbox-item">
                         <input type="checkbox" id="type-topic" value="topic">
-                        <label for="type-topic">صفحة الدرس</label>
+                        <label for="type-topic" data-en="Video Page" data-ar="صفحة الفيديو">Video Page</label>
                     </div>
                     <div class="checkbox-item">
                         <input type="checkbox" id="type-summary" value="summary">
-                        <label for="type-summary">ملخص قصير</label>
+                        <label for="type-summary" data-en="Written Summary" data-ar="المختصر الكتابي">Written Summary</label>
                     </div>
                     <div class="checkbox-item">
                         <input type="checkbox" id="type-quiz" value="quiz">
-                        <label for="type-quiz">اختبار قصير</label>
+                        <label for="type-quiz" data-en="Short Quiz" data-ar="الاختبار القصير">Short Quiz</label>
                     </div>
                     <div class="checkbox-item">
                         <input type="checkbox" id="type-resource" value="resource">
-                        <label for="type-resource">مصادر القسم</label>
+                        <label for="type-resource" data-en="Section Resources" data-ar="مصادر القسم">Section Resources</label>
                     </div>
                     <div class="checkbox-item">
                         <input type="checkbox" id="type-lesson-quiz" value="lesson-quiz">
-                        <label for="type-lesson-quiz">اختبار الدرس</label>
+                        <label for="type-lesson-quiz" data-en="Section Quiz" data-ar="اختبار القسم">Section Quiz</label>
                     </div>
                     <div class="checkbox-item">
                         <input type="checkbox" id="type-final-quiz" value="final-quiz">
-                        <label for="type-final-quiz">الاختبار النهائي</label>
+                        <label for="type-final-quiz" data-en="Final Quiz" data-ar="الاختبار النهائي">Final Quiz</label>
                     </div>
                     <div class="checkbox-item">
                         <input type="checkbox" id="type-outro" value="outro">
-                        <label for="type-outro">خاتمة الدورة</label>
+                        <label for="type-outro" data-en="Course Outro" data-ar="خاتمة الدورة">Course Outro</label>
                     </div>
                     <div class="checkbox-item">
                         <input type="checkbox" id="type-assessment" value="assessment">
-                        <label for="type-assessment">التسليم النهائي</label>
+                        <label for="type-assessment" data-en="Final Assessment" data-ar="التقييم النهائي">Final Assessment</label>
                     </div>
                 </div>
             </div>
 
             <div class="action-buttons">
                 <button class="btn btn-primary" onclick="generateLinks()">
-                    ✨ إنشاء الروابط
+                    <span id="generateBtn">✨ Generate Links</span>
                 </button>
                 <button class="btn btn-success" onclick="copyAllLinks()">
-                    📋 نسخ كل الروابط
+                    <span id="copyAllBtn">📋 Copy All Links</span>
                 </button>
                 <button class="btn btn-secondary" onclick="clearForm()">
-                    🔄 مسح البيانات
+                    <span id="clearBtn">🔄 Clear Data</span>
                 </button>
                 <button class="btn btn-secondary" onclick="exportLinks()">
-                    💾 تصدير كملف
+                    <span id="exportBtn">💾 Export as File</span>
                 </button>
             </div>
 
             <div class="preview-section" id="previewSection" style="display: none;">
-                <h3>📋 الروابط المُنشأة</h3>
+                <h3 id="generatedTitle">📋 Generated Links</h3>
                 <div class="links-container" id="linksContainer"></div>
             </div>
 
             <div class="history-section" id="historySection" style="display: none;">
-                <h3>📚 السجل السابق</h3>
+                <h3 id="historyTitle">📚 Previous History</h3>
                 <div id="historyContainer"></div>
             </div>
         </div>
@@ -476,10 +658,142 @@
         const baseURL = 'https://almdrasa.com';
         let generatedLinks = [];
         let history = [];
+        let currentLang = 'en';
+
+        const translations = {
+            en: {
+                mainTitle: '🔗 Educational Links Generator',
+                subtitle: 'Smart tool for creating Almdrasa course links easily and quickly',
+                basicInfoTitle: '📚 Basic Information',
+                trackLabel: 'Track',
+                courseLabel: 'Course',
+                lessonLabel: 'Section',
+                topicLabel: 'Video',
+                linkTypesTitle: '⚙️ Required Link Types',
+                generateBtn: '✨ Generate Links',
+                copyAllBtn: '📋 Copy All Links',
+                clearBtn: '🔄 Clear Data',
+                exportBtn: '💾 Export as File',
+                generatedTitle: '📋 Generated Links',
+                historyTitle: '📚 Previous History',
+                copyText: 'Copy',
+                copiedText: '✓ Copied',
+                categories: {
+                    '🏠 Home': '🏠 Home Page',
+                    '🎬 Intro': '🎬 Introduction',
+                    '🎬 Outro': '🎬 Outro',
+                    '📖 Sections': '📖 Sections',
+                    '🎥 Videos': '🎥 Videos',
+                    '📄 Summaries': '📄 Written Summaries',
+                    '❓ Short Quizzes': '❓ Short Quizzes',
+                    '✅ Section Quizzes': '✅ Section Quizzes',
+                    '🎯 Final Quizzes': '🎯 Final Quizzes',
+                    '📚 Resources': '📚 Resources',
+                    '📊 Assessments': '📊 Assessments'
+                },
+                toasts: {
+                    fillRequired: '⚠️ Please enter Track and Course at least',
+                    linkCopied: '✓ Link copied successfully',
+                    allCopied: '✓ Copied {count} links successfully',
+                    noLinks: '⚠️ No links to copy',
+                    dataCleared: '🔄 Data cleared',
+                    noLinksExport: '⚠️ No links to export',
+                    exported: '💾 Links exported successfully',
+                    loadedFromHistory: '✓ Data loaded from history'
+                }
+            },
+            ar: {
+                mainTitle: '🔗 مولد الروابط التعليمية',
+                subtitle: 'أداة ذكية لإنشاء روابط دورات المدرسة بسهولة وسرعة',
+                basicInfoTitle: '📚 المعلومات الأساسية',
+                trackLabel: 'المسار',
+                courseLabel: 'الدورة',
+                lessonLabel: 'القسم',
+                topicLabel: 'الفيديو',
+                linkTypesTitle: '⚙️ أنواع الروابط المطلوبة',
+                generateBtn: '✨ إنشاء الروابط',
+                copyAllBtn: '📋 نسخ كل الروابط',
+                clearBtn: '🔄 مسح البيانات',
+                exportBtn: '💾 تصدير كملف',
+                generatedTitle: '📋 الروابط المُنشأة',
+                historyTitle: '📚 السجل السابق',
+                copyText: 'نسخ',
+                copiedText: '✓ تم النسخ',
+                categories: {
+                    '🏠 Home': '🏠 الصفحة الرئيسية',
+                    '🎬 Intro': '🎬 المقدمة',
+                    '🎬 Outro': '🎬 الخاتمة',
+                    '📖 Sections': '📖 الأقسام',
+                    '🎥 Videos': '🎥 الفيديوهات',
+                    '📄 Summaries': '📄 المختصرات الكتابية',
+                    '❓ Short Quizzes': '❓ الاختبارات القصيرة',
+                    '✅ Section Quizzes': '✅ اختبارات الأقسام',
+                    '🎯 Final Quizzes': '🎯 الاختبارات النهائية',
+                    '📚 Resources': '📚 المصادر',
+                    '📊 Assessments': '📊 التقييمات'
+                },
+                toasts: {
+                    fillRequired: '⚠️ يرجى إدخال المسار والدورة على الأقل',
+                    linkCopied: '✓ تم نسخ الرابط بنجاح',
+                    allCopied: '✓ تم نسخ {count} رابط بنجاح',
+                    noLinks: '⚠️ لا توجد روابط لنسخها',
+                    dataCleared: '🔄 تم مسح البيانات',
+                    noLinksExport: '⚠️ لا توجد روابط للتصدير',
+                    exported: '💾 تم تصدير الروابط بنجاح',
+                    loadedFromHistory: '✓ تم تحميل البيانات من السجل'
+                }
+            }
+        };
+
+        function switchLang(lang) {
+            currentLang = lang;
+            document.documentElement.lang = lang;
+            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+            
+            // Update active button
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update all text content
+            const t = translations[lang];
+            document.getElementById('mainTitle').textContent = t.mainTitle;
+            document.getElementById('subtitle').textContent = t.subtitle;
+            document.getElementById('basicInfoTitle').textContent = t.basicInfoTitle;
+            document.getElementById('trackLabel').textContent = t.trackLabel;
+            document.getElementById('courseLabel').textContent = t.courseLabel;
+            document.getElementById('lessonLabel').textContent = t.lessonLabel;
+            document.getElementById('topicLabel').textContent = t.topicLabel;
+            document.getElementById('linkTypesTitle').textContent = t.linkTypesTitle;
+            document.getElementById('generateBtn').textContent = t.generateBtn;
+            document.getElementById('copyAllBtn').textContent = t.copyAllBtn;
+            document.getElementById('clearBtn').textContent = t.clearBtn;
+            document.getElementById('exportBtn').textContent = t.exportBtn;
+            document.getElementById('generatedTitle').textContent = t.generatedTitle;
+            document.getElementById('historyTitle').textContent = t.historyTitle;
+            
+            // Update checkbox labels
+            document.querySelectorAll('.checkbox-item label').forEach(label => {
+                const key = lang === 'en' ? 'data-en' : 'data-ar';
+                if (label.hasAttribute(key)) {
+                    label.textContent = label.getAttribute(key);
+                }
+            });
+            
+                // Regenerate links if any exist
+            if (generatedLinks.length > 0) {
+                displayLinks();
+            }
+        }
 
         // Real-time preview on input
         document.querySelectorAll('input[type="text"]').forEach(input => {
-            input.addEventListener('input', updatePreview);
+            input.addEventListener('input', (e) => {
+                // Convert to lowercase and replace spaces with dashes
+                e.target.value = e.target.value.toLowerCase().replace(/\s+/g, '-');
+                updatePreview();
+            });
         });
 
         document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
@@ -502,16 +816,13 @@
             const topic = document.getElementById('topic').value.trim();
 
             if (!track || !course) {
-                showToast('⚠️ يرجى إدخال المسار والدورة على الأقل');
+                showToast(translations[currentLang].toasts.fillRequired);
                 return;
             }
 
             generatedLinks = [];
             const selectedTypes = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
                 .map(cb => cb.value);
-
-            const linksContainer = document.getElementById('linksContainer');
-            linksContainer.innerHTML = '';
 
             // Generate links based on selected types
             selectedTypes.forEach(type => {
@@ -521,29 +832,7 @@
                 }
             });
 
-            // Group links by category
-            const grouped = groupLinksByCategory(generatedLinks);
-            
-            // Display grouped links
-            Object.keys(grouped).forEach(category => {
-                const categoryDiv = document.createElement('div');
-                categoryDiv.className = 'link-category';
-                categoryDiv.innerHTML = `<h4>${category}</h4>`;
-                
-                grouped[category].forEach(link => {
-                    const linkItem = document.createElement('div');
-                    linkItem.className = 'link-item';
-                    linkItem.innerHTML = `
-                        <div class="link-text">${link}</div>
-                        <button class="copy-btn" onclick="copyLink('${link}', this)">نسخ</button>
-                    `;
-                    categoryDiv.appendChild(linkItem);
-                });
-                
-                linksContainer.appendChild(categoryDiv);
-            });
-
-            document.getElementById('previewSection').style.display = 'block';
+            displayLinks();
             
             // Save to history
             saveToHistory(track, course, lesson, topic, selectedTypes);
@@ -567,17 +856,17 @@
                     break;
                 case 'topic':
                     if (lesson && topic) {
-                        links.push(`${baseTrackCourse}/lessons/${lesson}/topic/${topic}/`);
+                        links.push(`${baseTrackCourse}/lessons/${lesson}/topics/${topic}`);
                     }
                     break;
                 case 'summary':
                     if (lesson && topic) {
-                        links.push(`${baseTrackCourse}/lessons/${lesson}/topics/short-summary-${topic}/quizzes/short-quiz-${topic}/`);
+                        links.push(`${baseTrackCourse}/lessons/${lesson}/topics/short-summary-${topic}`);
                     }
                     break;
                 case 'quiz':
-                    if (topic) {
-                        links.push(`${baseURL}/topics/short-summary-${topic}/`);
+                    if (lesson && topic) {
+                        links.push(`${baseTrackCourse}/lessons/${lesson}/topics/short-summary-${topic}/quizzes/short-quiz-${topic}`);
                     }
                     break;
                 case 'resource':
@@ -587,7 +876,7 @@
                     break;
                 case 'lesson-quiz':
                     if (lesson) {
-                        links.push(`${baseTrackCourse}/lessons/${lesson}/quizzes/${lesson}-quiz/`);
+                        links.push(`${baseTrackCourse}/lessons/${lesson}/quizzes/quiz-${lesson}`);
                     }
                     break;
                 case 'final-quiz':
@@ -604,22 +893,52 @@
             return links;
         }
 
+        function displayLinks() {
+            const linksContainer = document.getElementById('linksContainer');
+            linksContainer.innerHTML = '';
+
+            // Group links by category
+            const grouped = groupLinksByCategory(generatedLinks);
+            
+            // Display grouped links
+            Object.keys(grouped).forEach(category => {
+                const translatedCategory = translations[currentLang].categories[category] || category;
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'link-category';
+                categoryDiv.innerHTML = `<h4>${translatedCategory}</h4>`;
+                
+                grouped[category].forEach(link => {
+                    const linkItem = document.createElement('div');
+                    linkItem.className = 'link-item';
+                    linkItem.innerHTML = `
+                        <div class="link-text">${link}</div>
+                        <button class="copy-btn" onclick="copyLink('${link}', this)">${translations[currentLang].copyText}</button>
+                    `;
+                    categoryDiv.appendChild(linkItem);
+                });
+                
+                linksContainer.appendChild(categoryDiv);
+            });
+
+            document.getElementById('previewSection').style.display = 'block';
+        }
+
         function groupLinksByCategory(links) {
             const grouped = {};
             
             links.forEach(link => {
-                let category = 'عام';
+                let category = '🏠 Home';
                 
-                if (link.includes('/lessons/') && link.includes('-introduction')) category = '🎬 المقدمة';
-                else if (link.includes('/lessons/') && link.includes('-outro')) category = '🎬 الخاتمة';
-                else if (link.includes('/lessons/') && !link.includes('/topic/') && !link.includes('/quizzes/')) category = '📖 الدروس';
-                else if (link.includes('/topic/')) category = '📝 المواضيع';
-                else if (link.includes('/topics/short-summary')) category = '📄 الملخصات';
-                else if (link.includes('/quizzes/') && link.includes('final')) category = '🎯 الاختبارات النهائية';
-                else if (link.includes('/quizzes/')) category = '✅ الاختبارات';
-                else if (link.includes('/resources/')) category = '📚 المصادر';
-                else if (link.includes('/final-assessment')) category = '📊 التقييمات';
-                else if (link.includes('/courses/') && link.split('/').length <= 6) category = '🏠 الصفحة الرئيسية';
+                if (link.includes('/lessons/') && link.includes('-introduction')) category = '🎬 Intro';
+                else if (link.includes('/lessons/') && link.includes('-outro')) category = '🎬 Outro';
+                else if (link.includes('/lessons/') && !link.includes('/topics/') && !link.includes('/quizzes/') && !link.includes('/resources/')) category = '📖 Sections';
+                else if (link.includes('/topics/') && !link.includes('short-summary') && !link.includes('/quizzes/')) category = '🎥 Videos';
+                else if (link.includes('/topics/short-summary') && !link.includes('/quizzes/')) category = '📄 Summaries';
+                else if (link.includes('/topics/short-summary') && link.includes('/quizzes/short-quiz')) category = '❓ Short Quizzes';
+                else if (link.includes('/lessons/') && link.includes('/quizzes/quiz-')) category = '✅ Section Quizzes';
+                else if (link.includes('/quizzes/') && link.includes('final')) category = '🎯 Final Quizzes';
+                else if (link.includes('/resources/')) category = '📚 Resources';
+                else if (link.includes('/final-assessment')) category = '📊 Assessments';
                 
                 if (!grouped[category]) grouped[category] = [];
                 grouped[category].push(link);
@@ -631,27 +950,28 @@
         function copyLink(link, button) {
             navigator.clipboard.writeText(link).then(() => {
                 const originalText = button.textContent;
-                button.textContent = '✓ تم النسخ';
+                button.textContent = translations[currentLang].copiedText;
                 button.classList.add('copied');
                 
                 setTimeout(() => {
-                    button.textContent = originalText;
+                    button.textContent = translations[currentLang].copyText;
                     button.classList.remove('copied');
                 }, 2000);
                 
-                showToast('✓ تم نسخ الرابط بنجاح');
+                showToast(translations[currentLang].toasts.linkCopied);
             });
         }
 
         function copyAllLinks() {
             if (generatedLinks.length === 0) {
-                showToast('⚠️ لا توجد روابط لنسخها');
+                showToast(translations[currentLang].toasts.noLinks);
                 return;
             }
 
             const allLinks = generatedLinks.join('\n');
             navigator.clipboard.writeText(allLinks).then(() => {
-                showToast(`✓ تم نسخ ${generatedLinks.length} رابط بنجاح`);
+                const message = translations[currentLang].toasts.allCopied.replace('{count}', generatedLinks.length);
+                showToast(message);
             });
         }
 
@@ -662,12 +982,12 @@
             document.getElementById('topic').value = '';
             document.getElementById('previewSection').style.display = 'none';
             generatedLinks = [];
-            showToast('🔄 تم مسح البيانات');
+            showToast(translations[currentLang].toasts.dataCleared);
         }
 
         function exportLinks() {
             if (generatedLinks.length === 0) {
-                showToast('⚠️ لا توجد روابط للتصدير');
+                showToast(translations[currentLang].toasts.noLinksExport);
                 return;
             }
 
@@ -680,7 +1000,7 @@
             a.click();
             window.URL.revokeObjectURL(url);
             
-            showToast('💾 تم تصدير الروابط بنجاح');
+            showToast(translations[currentLang].toasts.exported);
         }
 
         function saveToHistory(track, course, lesson, topic, types) {
@@ -715,13 +1035,13 @@
                 item.className = 'history-item';
                 item.onclick = () => loadFromHistory(index);
                 
-                const date = new Date(entry.timestamp).toLocaleString('ar-EG');
+                const date = new Date(entry.timestamp).toLocaleString(currentLang === 'ar' ? 'ar-EG' : 'en-US');
                 item.innerHTML = `
                     <div class="history-item-title">
                         ${entry.track} / ${entry.course} ${entry.lesson ? '/ ' + entry.lesson : ''}
                     </div>
                     <div class="history-item-info">
-                        ${date} • ${entry.links.length} رابط
+                        ${date} • ${entry.links.length} ${currentLang === 'ar' ? 'رابط' : 'links'}
                     </div>
                 `;
                 container.appendChild(item);
@@ -741,7 +1061,7 @@
             });
             
             generateLinks();
-            showToast('✓ تم تحميل البيانات من السجل');
+            showToast(translations[currentLang].toasts.loadedFromHistory);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
