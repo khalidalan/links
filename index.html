@@ -1,1079 +1,1622 @@
+
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Educational Links Generator</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg-primary: #0f0f1e;
-            --bg-secondary: #1a1a2e;
-            --bg-tertiary: #16213e;
-            --accent-primary: #6c63ff;
-            --accent-secondary: #4a47a3;
-            --accent-tertiary: #3b82f6;
-            --text-primary: #e4e4e7;
-            --text-secondary: #a1a1aa;
-            --text-muted: #71717a;
-            --border-color: #27272a;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --card-bg: rgba(26, 26, 46, 0.8);
-            --card-border: rgba(108, 99, 255, 0.2);
-            --hover-bg: rgba(108, 99, 255, 0.1);
-        }
-
-        body {
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg-primary);
-            min-height: 100vh;
-            padding: 20px;
-            color: var(--text-primary);
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: 
-                radial-gradient(circle at 20% 50%, rgba(108, 99, 255, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 40% 20%, rgba(74, 71, 163, 0.1) 0%, transparent 50%);
-            animation: gradientShift 15s ease infinite;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        @keyframes gradientShift {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            50% { transform: translate(5%, 5%) rotate(180deg); }
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-            animation: fadeInDown 0.6s ease;
-        }
-
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .header-top h1 {
-            font-size: 2.5em;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: 800;
-            letter-spacing: -1px;
-        }
-
-        .lang-toggle {
-            background: var(--bg-secondary);
-            border: 2px solid var(--border-color);
-            border-radius: 50px;
-            padding: 8px;
-            display: flex;
-            gap: 5px;
-            backdrop-filter: blur(10px);
-        }
-
-        .lang-btn {
-            padding: 8px 20px;
-            border: none;
-            border-radius: 50px;
-            background: transparent;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            font-size: 0.9em;
-        }
-
-        .lang-btn.active {
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            color: white;
-            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.4);
-        }
-
-        .lang-btn:hover:not(.active) {
-            color: var(--text-primary);
-        }
-
-        .header p {
-            font-size: 1.1em;
-            color: var(--text-secondary);
-        }
-
-        .main-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            padding: 40px;
-            border: 1px solid var(--card-border);
-            box-shadow: 
-                0 20px 60px rgba(0, 0, 0, 0.5),
-                inset 0 1px 0 rgba(255, 255, 255, 0.05);
-            animation: fadeInUp 0.6s ease;
-        }
-
-        .form-section {
-            margin-bottom: 35px;
-        }
-
-        .form-section h2 {
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 20px;
-            font-size: 1.5em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .input-group label {
-            font-weight: 600;
-            color: var(--text-secondary);
-            font-size: 0.95em;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .required {
-            color: var(--danger);
-        }
-
-        .input-group input {
-            padding: 14px 18px;
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            font-size: 1em;
-            transition: all 0.3s ease;
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            font-family: 'Monaco', 'Courier New', monospace;
-        }
-
-        .input-group input:focus {
-            outline: none;
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 0 4px rgba(108, 99, 255, 0.15);
-            background: var(--bg-tertiary);
-        }
-
-        .input-group input::placeholder {
-            color: var(--text-muted);
-        }
-
-        .checkbox-group {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 12px;
-            margin-top: 15px;
-        }
-
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px 16px;
-            background: var(--bg-secondary);
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid var(--border-color);
-        }
-
-        .checkbox-item:hover {
-            background: var(--hover-bg);
-            border-color: var(--accent-primary);
-            transform: translateX(-3px);
-        }
-
-        .checkbox-item input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            accent-color: var(--accent-primary);
-        }
-
-        .checkbox-item label {
-            cursor: pointer;
-            user-select: none;
-            font-weight: 500;
-            color: var(--text-primary);
-            font-size: 0.95em;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-top: 25px;
-        }
-
-        .btn {
-            padding: 14px 28px;
-            border: none;
-            border-radius: 12px;
-            font-size: 1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-
-        .btn:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-
-        .btn span {
-            position: relative;
-            z-index: 1;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(108, 99, 255, 0.5);
-        }
-
-        .btn-secondary {
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            border: 2px solid var(--border-color);
-        }
-
-        .btn-secondary:hover {
-            background: var(--bg-tertiary);
-            border-color: var(--accent-primary);
-            transform: translateY(-2px);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, var(--success), #059669);
-            color: white;
-        }
-
-        .btn-success:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(16, 185, 129, 0.5);
-        }
-
-        .preview-section {
-            background: var(--bg-secondary);
-            border-radius: 16px;
-            padding: 25px;
-            margin-top: 35px;
-            border: 1px solid var(--card-border);
-        }
-
-        .preview-section h3 {
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 20px;
-            font-size: 1.4em;
-            font-weight: 700;
-        }
-
-        .links-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .link-category {
-            background: var(--bg-tertiary);
-            border-radius: 12px;
-            padding: 20px;
-            border-right: 4px solid var(--accent-primary);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .link-category h4 {
-            color: var(--accent-tertiary);
-            margin-bottom: 15px;
-            font-size: 1.1em;
-            font-weight: 700;
-        }
-
-        .link-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 14px;
-            background: var(--bg-secondary);
-            border-radius: 10px;
-            margin-bottom: 10px;
-            transition: all 0.3s ease;
-            border: 1px solid var(--border-color);
-        }
-
-        .link-item:hover {
-            background: var(--hover-bg);
-            border-color: var(--accent-primary);
-            transform: translateX(-5px);
-        }
-
-        .link-text {
-            flex: 1;
-            font-family: 'Monaco', 'Courier New', monospace;
-            font-size: 0.85em;
-            color: var(--text-secondary);
-            word-break: break-all;
-        }
-
-        .copy-btn {
-            padding: 8px 16px;
-            background: var(--accent-primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.85em;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-            font-weight: 600;
-        }
-
-        .copy-btn:hover {
-            background: var(--accent-secondary);
-            transform: scale(1.05);
-        }
-
-        .copy-btn.copied {
-            background: var(--success);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 50px;
-            color: var(--text-muted);
-        }
-
-        .empty-state-icon {
-            font-size: 4em;
-            margin-bottom: 15px;
-            opacity: 0.5;
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-            padding: 16px 28px;
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-            opacity: 0;
-            transition: all 0.3s ease;
-            z-index: 1000;
-            border: 1px solid var(--card-border);
-            backdrop-filter: blur(10px);
-            font-weight: 600;
-        }
-
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
-
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .history-section {
-            margin-top: 35px;
-            background: var(--bg-secondary);
-            border-radius: 16px;
-            padding: 25px;
-            border: 1px solid var(--card-border);
-        }
-
-        .history-section h3 {
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 20px;
-            font-weight: 700;
-        }
-
-        .history-item {
-            background: var(--bg-tertiary);
-            padding: 16px;
-            border-radius: 10px;
-            margin-bottom: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border-right: 4px solid var(--accent-primary);
-            border: 1px solid var(--border-color);
-        }
-
-        .history-item:hover {
-            background: var(--hover-bg);
-            border-color: var(--accent-primary);
-            transform: translateX(-5px);
-        }
-
-        .history-item-title {
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 6px;
-        }
-
-        .history-item-info {
-            font-size: 0.85em;
-            color: var(--text-secondary);
-        }
-
-        /* Scrollbar Styling */
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--bg-secondary);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--accent-primary);
-            border-radius: 5px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent-secondary);
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Almdrasa Links Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+  /* ===================== RESET & ROOT ===================== */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg0: #080b10;
+    --bg1: #0d1117;
+    --bg2: #131820;
+    --bg3: #1a2030;
+    --line: rgba(255,255,255,0.06);
+    --line2: rgba(255,255,255,0.1);
+    --accent: #00e5ff;
+    --accent2: #0077ff;
+    --accent-dim: rgba(0,229,255,0.12);
+    --accent-dim2: rgba(0,229,255,0.06);
+    --green: #00ffb3;
+    --green-dim: rgba(0,255,179,0.1);
+    --red: #ff4d6d;
+    --red-dim: rgba(255,77,109,0.1);
+    --yellow: #ffd166;
+    --txt0: #f0f4f8;
+    --txt1: #8899aa;
+    --txt2: #4a5568;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'IBM Plex Sans Arabic', sans-serif;
+    --display: 'Syne', sans-serif;
+    --radius: 10px;
+    --radius-lg: 16px;
+  }
+
+  html[lang="ar"] { font-family: var(--sans); }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg0);
+    color: var(--txt0);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===================== GRID BG ===================== */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none; z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    top: -30vh; left: -20vw;
+    width: 80vw; height: 80vh;
+    background: radial-gradient(ellipse, rgba(0,119,255,0.07) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ===================== LAYOUT ===================== */
+  .shell {
+    position: relative; z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+  }
+
+  /* ===================== HEADER ===================== */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .logo-area {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .logo-icon {
+    width: 42px; height: 42px;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .logo-icon svg { width: 22px; height: 22px; color: #fff; }
+
+  .logo-text h1 {
+    font-family: var(--display);
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--txt0);
+    line-height: 1;
+  }
+
+  .logo-text p {
+    font-size: 0.75rem;
+    color: var(--txt1);
+    margin-top: 3px;
+  }
+
+  .header-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* ===================== LANG TOGGLE ===================== */
+  .lang-toggle {
+    display: flex;
+    background: var(--bg2);
+    border: 1px solid var(--line2);
+    border-radius: 8px;
+    padding: 3px;
+    gap: 2px;
+  }
+
+  .lang-btn {
+    padding: 6px 14px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--txt1);
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+    font-family: var(--mono);
+  }
+
+  .lang-btn.active {
+    background: var(--accent);
+    color: #000;
+  }
+
+  /* ===================== MAIN GRID ===================== */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  @media (max-width: 768px) {
+    .main-grid { grid-template-columns: 1fr; }
+  }
+
+  .panel {
+    background: var(--bg1);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .panel-full {
+    grid-column: 1 / -1;
+  }
+
+  .panel-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .panel-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--txt1);
+    font-family: var(--mono);
+  }
+
+  .panel-title svg { width: 14px; height: 14px; color: var(--accent); }
+
+  .panel-body { padding: 20px; }
+
+  /* ===================== INPUTS ===================== */
+  .fields-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  @media (max-width: 500px) {
+    .fields-grid { grid-template-columns: 1fr; }
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .field label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--txt1);
+    font-family: var(--mono);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .field label .req { color: var(--accent); }
+  .field label .opt { color: var(--txt2); font-size: 0.65rem; }
+
+  .field input {
+    background: var(--bg2);
+    border: 1px solid var(--line2);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    font-family: var(--mono);
+    color: var(--txt0);
+    transition: all 0.2s;
+    width: 100%;
+  }
+
+  .field input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: var(--bg3);
+    box-shadow: 0 0 0 3px rgba(0,229,255,0.08);
+  }
+
+  .field input::placeholder { color: var(--txt2); }
+
+  .field input.has-value {
+    border-color: rgba(0,229,255,0.3);
+  }
+
+  .field input.error {
+    border-color: var(--red);
+    box-shadow: 0 0 0 3px var(--red-dim);
+    animation: shake 0.3s ease;
+  }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+  }
+
+  /* URL Preview inside input */
+  .url-preview {
+    margin-top: 8px;
+    padding: 10px 14px;
+    background: var(--bg0);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    line-height: 1.7;
+    color: var(--txt1);
+    word-break: break-all;
+    min-height: 36px;
+    display: none;
+  }
+
+  .url-preview.visible { display: block; }
+  .url-preview .seg-base { color: var(--txt2); }
+  .url-preview .seg-track { color: var(--accent); }
+  .url-preview .seg-course { color: var(--green); }
+  .url-preview .seg-lesson { color: var(--yellow); }
+  .url-preview .seg-topic { color: #ff9f43; }
+
+  /* ===================== CHECKBOXES ===================== */
+  .cb-toolbar {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .mini-btn {
+    padding: 4px 10px;
+    border: 1px solid var(--line2);
+    border-radius: 6px;
+    background: var(--bg2);
+    color: var(--txt1);
+    font-size: 0.7rem;
+    font-weight: 600;
+    font-family: var(--mono);
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.04em;
+  }
+
+  .mini-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .cb-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .cb-group-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--txt2);
+    font-family: var(--mono);
+    margin-bottom: 6px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .cb-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .cb-chip {
+    position: relative;
+  }
+
+  .cb-chip input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0; height: 0;
+  }
+
+  .cb-chip label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: var(--bg2);
+    border: 1px solid var(--line2);
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--txt1);
+    cursor: pointer;
+    transition: all 0.18s;
+    user-select: none;
+    white-space: nowrap;
+  }
+
+  .cb-chip label svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+  .cb-chip input:checked + label {
+    background: var(--accent-dim);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .cb-chip input:disabled + label {
+    opacity: 0.35;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .cb-chip label:hover:not(.disabled) {
+    border-color: var(--accent);
+    color: var(--txt0);
+    background: var(--accent-dim2);
+  }
+
+  /* ===================== ACTION BUTTONS ===================== */
+  .actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 16px 20px;
+    border-top: 1px solid var(--line);
+    background: var(--bg0);
+  }
+
+  .btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 18px;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 0.8rem;
+    font-weight: 600;
+    font-family: var(--mono);
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  .btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    color: #000;
+  }
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(0,229,255,0.25); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-ghost {
+    background: var(--bg2);
+    color: var(--txt1);
+    border: 1px solid var(--line2);
+  }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  .btn-danger {
+    background: var(--red-dim);
+    color: var(--red);
+    border: 1px solid rgba(255,77,109,0.2);
+  }
+  .btn-danger:hover { background: rgba(255,77,109,0.2); }
+
+  /* ===================== BASE URL TOGGLE ===================== */
+  .url-toggle-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--line);
+    background: var(--bg0);
+  }
+
+  .url-toggle-bar span {
+    font-size: 0.72rem;
+    color: var(--txt1);
+    font-family: var(--mono);
+  }
+
+  .toggle-switch {
+    position: relative;
+    width: 36px; height: 20px;
+    flex-shrink: 0;
+  }
+
+  .toggle-switch input { opacity: 0; width: 0; height: 0; }
+
+  .toggle-slider {
+    position: absolute; inset: 0;
+    background: var(--bg3);
+    border: 1px solid var(--line2);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .toggle-slider::before {
+    content: '';
+    position: absolute;
+    left: 2px; top: 2px;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--txt2);
+    transition: all 0.2s;
+  }
+
+  .toggle-switch input:checked + .toggle-slider { background: var(--accent-dim); border-color: var(--accent); }
+  .toggle-switch input:checked + .toggle-slider::before { transform: translateX(16px); background: var(--accent); }
+
+  .base-url-label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--txt2);
+    background: var(--bg2);
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--line);
+  }
+
+  /* ===================== SEARCH BAR ===================== */
+  .search-bar {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .search-wrap {
+    position: relative;
+  }
+
+  .search-wrap svg {
+    position: absolute;
+    left: 12px; top: 50%;
+    transform: translateY(-50%);
+    width: 14px; height: 14px;
+    color: var(--txt2);
+    pointer-events: none;
+  }
+
+  html[dir="rtl"] .search-wrap svg { left: auto; right: 12px; }
+
+  .search-wrap input {
+    width: 100%;
+    background: var(--bg2);
+    border: 1px solid var(--line2);
+    border-radius: var(--radius);
+    padding: 8px 12px 8px 36px;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--txt0);
+    transition: all 0.2s;
+  }
+
+  html[dir="rtl"] .search-wrap input { padding: 8px 36px 8px 12px; }
+
+  .search-wrap input:focus { outline: none; border-color: var(--accent); }
+  .search-wrap input::placeholder { color: var(--txt2); }
+
+  /* ===================== LINKS OUTPUT ===================== */
+  .output-empty {
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--txt2);
+  }
+
+  .output-empty svg { width: 40px; height: 40px; opacity: 0.3; margin-bottom: 12px; }
+  .output-empty p { font-size: 0.85rem; }
+
+  .link-category {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .link-category:last-child { border-bottom: none; }
+
+  .cat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background: var(--bg0);
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+  }
+
+  .cat-header:hover { background: var(--bg2); }
+
+  .cat-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-family: var(--mono);
+    color: var(--txt1);
+  }
+
+  .cat-title svg { width: 13px; height: 13px; color: var(--accent); }
+
+  .cat-count {
+    background: var(--accent-dim);
+    color: var(--accent);
+    border-radius: 20px;
+    padding: 1px 8px;
+    font-size: 0.65rem;
+    font-family: var(--mono);
+    font-weight: 700;
+  }
+
+  .cat-chevron { width: 14px; height: 14px; color: var(--txt2); transition: transform 0.2s; }
+  .cat-chevron.open { transform: rotate(180deg); }
+
+  .cat-body { display: none; }
+  .cat-body.open { display: block; }
+
+  .link-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 20px;
+    border-top: 1px solid var(--line);
+    transition: background 0.15s;
+  }
+
+  .link-row:hover { background: var(--bg2); }
+  .link-row.hidden { display: none; }
+
+  .link-url {
+    flex: 1;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--txt1);
+    word-break: break-all;
+    line-height: 1.5;
+  }
+
+  .link-url .seg-track { color: var(--accent); }
+  .link-url .seg-course { color: var(--green); }
+  .link-url .seg-lesson { color: var(--yellow); }
+  .link-url .seg-topic { color: #ff9f43; }
+  .link-url .seg-base { color: var(--txt2); }
+
+  .link-actions {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .icon-btn {
+    width: 30px; height: 30px;
+    border: 1px solid var(--line2);
+    border-radius: 6px;
+    background: var(--bg2);
+    color: var(--txt1);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+
+  .icon-btn svg { width: 13px; height: 13px; }
+
+  .icon-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+
+  .icon-btn.copied { border-color: var(--green); color: var(--green); background: var(--green-dim); }
+
+  /* ===================== STATS BAR ===================== */
+  .stats-bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 20px;
+    border-top: 1px solid var(--line);
+    background: var(--bg0);
+  }
+
+  .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--txt1);
+  }
+
+  .stat-item strong { color: var(--accent); }
+
+  /* ===================== HISTORY ===================== */
+  .history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .history-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--line);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .history-item:last-child { border-bottom: none; }
+  .history-item:hover { background: var(--bg2); }
+
+  .history-item-icon {
+    width: 32px; height: 32px;
+    background: var(--bg2);
+    border: 1px solid var(--line2);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .history-item-icon svg { width: 14px; height: 14px; color: var(--accent); }
+
+  .history-item-body { flex: 1; min-width: 0; }
+
+  .history-item-title {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--txt0);
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .history-item-meta {
+    font-size: 0.7rem;
+    color: var(--txt2);
+    margin-top: 2px;
+    font-family: var(--mono);
+  }
+
+  .history-item-count {
+    background: var(--bg2);
+    border: 1px solid var(--line);
+    color: var(--txt1);
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    border-radius: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .history-empty {
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--txt2);
+    font-size: 0.82rem;
+    font-family: var(--mono);
+  }
+
+  /* ===================== TOAST ===================== */
+  .toasts {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 9999;
+    pointer-events: none;
+    min-width: 280px;
+  }
+
+  .toast {
+    background: var(--bg3);
+    border: 1px solid var(--line2);
+    border-radius: 10px;
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--txt0);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    animation: toastIn 0.3s ease forwards;
+    pointer-events: all;
+  }
+
+  .toast.out { animation: toastOut 0.3s ease forwards; }
+  .toast svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .toast.success { border-color: rgba(0,255,179,0.3); }
+  .toast.success svg { color: var(--green); }
+  .toast.error { border-color: rgba(255,77,109,0.3); }
+  .toast.error svg { color: var(--red); }
+  .toast.info svg { color: var(--accent); }
+
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes toastOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(12px); }
+  }
+
+  /* ===================== KEYBOARD HINT ===================== */
+  .kbd {
+    display: inline-flex;
+    align-items: center;
+    background: var(--bg2);
+    border: 1px solid var(--line2);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--txt2);
+  }
+
+  /* ===================== SCROLLBAR ===================== */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg1); }
+  ::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent2); }
+
+  /* ===================== FADE IN ===================== */
+  .fade-in {
+    animation: fadeIn 0.35s ease forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="header-top">
-                <h1 id="mainTitle">🔗 Educational Links Generator</h1>
-                <div class="lang-toggle">
-                    <button class="lang-btn active" onclick="switchLang('en')">EN</button>
-                    <button class="lang-btn" onclick="switchLang('ar')">AR</button>
-                </div>
-            </div>
-            <p id="subtitle">Smart tool for creating Almdrasa course links easily and quickly</p>
+
+<div class="shell">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="logo-area">
+      <div class="logo-icon">
+        <i data-lucide="link-2"></i>
+      </div>
+      <div class="logo-text">
+        <h1 id="mainTitle">Links Generator</h1>
+        <p id="subtitle">Almdrasa URL Builder</p>
+      </div>
+    </div>
+    <div class="header-controls">
+      <div class="lang-toggle">
+        <button class="lang-btn active" onclick="App.switchLang('en', this)">EN</button>
+        <button class="lang-btn" onclick="App.switchLang('ar', this)">AR</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="main-grid">
+
+    <!-- LEFT: INPUTS -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <i data-lucide="settings-2"></i>
+          <span id="configLabel">Configuration</span>
+        </div>
+        <span class="kbd" id="kbdHint">⌘↵ generate</span>
+      </div>
+      <div class="panel-body">
+        <div class="fields-grid">
+          <div class="field">
+            <label>
+              <span id="trackLabel">Track</span>
+              <span class="req">*</span>
+            </label>
+            <input type="text" id="track" placeholder="programming-foundations">
+          </div>
+          <div class="field">
+            <label>
+              <span id="courseLabel">Course</span>
+              <span class="req">*</span>
+            </label>
+            <input type="text" id="course" placeholder="fundamentals">
+          </div>
+          <div class="field">
+            <label>
+              <span id="lessonLabel">Section</span>
+              <span class="opt" id="optionalLabel">(optional)</span>
+            </label>
+            <input type="text" id="lesson" placeholder="programming-basics">
+          </div>
+          <div class="field">
+            <label>
+              <span id="topicLabel">Video</span>
+              <span class="opt">(optional)</span>
+            </label>
+            <input type="text" id="topic" placeholder="what-is-programming">
+          </div>
         </div>
 
-        <div class="main-card">
-            <div class="form-section">
-                <h2 id="basicInfoTitle">📚 Basic Information</h2>
-                <div class="form-grid">
-                    <div class="input-group">
-                        <label for="track">
-                            <span id="trackLabel">Track</span>
-                            <span class="required">*</span>
-                        </label>
-                        <input type="text" id="track" placeholder="programming-foundations" required>
-                    </div>
-                    <div class="input-group">
-                        <label for="course">
-                            <span id="courseLabel">Course</span>
-                            <span class="required">*</span>
-                        </label>
-                        <input type="text" id="course" placeholder="fundamentals" required>
-                    </div>
-                </div>
-                <div class="form-grid">
-                    <div class="input-group">
-                        <label for="lesson" id="lessonLabel">Section</label>
-                        <input type="text" id="lesson" placeholder="programming-basics">
-                    </div>
-                    <div class="input-group">
-                        <label for="topic" id="topicLabel">Video</label>
-                        <input type="text" id="topic" placeholder="what-is-programming">
-                    </div>
-                </div>
-            </div>
+        <!-- Live URL preview -->
+        <div class="url-preview" id="urlPreview"></div>
+      </div>
 
-            <div class="form-section">
-                <h2 id="linkTypesTitle">⚙️ Required Link Types</h2>
-                <div class="checkbox-group" id="checkboxGroup">
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="type-course" value="course" checked>
-                        <label for="type-course" data-en="Course Main Page" data-ar="صفحة الدورة الرئيسية">Course Main Page</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="type-intro" value="intro">
-                        <label for="type-intro" data-en="Course Introduction" data-ar="مقدمة الدورة">Course Introduction</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="type-lesson" value="lesson">
-                        <label for="type-lesson" data-en="Section Page" data-ar="صفحة القسم">Section Page</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="type-topic" value="topic">
-                        <label for="type-topic" data-en="Video Page" data-ar="صفحة الفيديو">Video Page</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="type-summary" value="summary">
-                        <label for="type-summary" data-en="Written Summary" data-ar="المختصر الكتابي">Written Summary</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="type-quiz" value="quiz">
-                        <label for="type-quiz" data-en="Short Quiz" data-ar="الاختبار القصير">Short Quiz</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="type-resource" value="resource">
-                        <label for="type-resource" data-en="Section Resources" data-ar="مصادر القسم">Section Resources</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="type-lesson-quiz" value="lesson-quiz">
-                        <label for="type-lesson-quiz" data-en="Section Quiz" data-ar="اختبار القسم">Section Quiz</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="type-final-quiz" value="final-quiz">
-                        <label for="type-final-quiz" data-en="Final Quiz" data-ar="الاختبار النهائي">Final Quiz</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="type-outro" value="outro">
-                        <label for="type-outro" data-en="Course Outro" data-ar="خاتمة الدورة">Course Outro</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="type-assessment" value="assessment">
-                        <label for="type-assessment" data-en="Final Assessment" data-ar="التقييم النهائي">Final Assessment</label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="action-buttons">
-                <button class="btn btn-primary" onclick="generateLinks()">
-                    <span id="generateBtn">✨ Generate Links</span>
-                </button>
-                <button class="btn btn-success" onclick="copyAllLinks()">
-                    <span id="copyAllBtn">📋 Copy All Links</span>
-                </button>
-                <button class="btn btn-secondary" onclick="clearForm()">
-                    <span id="clearBtn">🔄 Clear Data</span>
-                </button>
-                <button class="btn btn-secondary" onclick="exportLinks()">
-                    <span id="exportBtn">💾 Export as File</span>
-                </button>
-            </div>
-
-            <div class="preview-section" id="previewSection" style="display: none;">
-                <h3 id="generatedTitle">📋 Generated Links</h3>
-                <div class="links-container" id="linksContainer"></div>
-            </div>
-
-            <div class="history-section" id="historySection" style="display: none;">
-                <h3 id="historyTitle">📚 Previous History</h3>
-                <div id="historyContainer"></div>
-            </div>
+      <!-- Checkboxes -->
+      <div class="panel-header" style="border-top: 1px solid var(--line);">
+        <div class="panel-title">
+          <i data-lucide="list-checks"></i>
+          <span id="typesLabel">Link Types</span>
         </div>
+        <div class="cb-toolbar">
+          <button class="mini-btn" onclick="App.selectAllTypes()" id="selAllBtn">All</button>
+          <button class="mini-btn" onclick="App.deselectAllTypes()" id="deselAllBtn">None</button>
+        </div>
+      </div>
+
+      <div class="panel-body" id="cbGroupsContainer">
+        <!-- Generated by JS -->
+      </div>
+
+      <!-- Actions -->
+      <div class="actions">
+        <button class="btn btn-primary" onclick="App.generate()" id="generateBtn">
+          <i data-lucide="zap"></i>
+          <span id="generateLabel">Generate</span>
+        </button>
+        <button class="btn btn-ghost" onclick="App.copyAll()" id="copyAllBtn">
+          <i data-lucide="copy"></i>
+          <span id="copyAllLabel">Copy All</span>
+        </button>
+        <button class="btn btn-ghost" onclick="App.exportLinks()" id="exportBtn">
+          <i data-lucide="download"></i>
+          <span id="exportLabel">Export</span>
+        </button>
+        <button class="btn btn-danger" onclick="App.clearForm()" id="clearBtn">
+          <i data-lucide="trash-2"></i>
+          <span id="clearLabel">Clear</span>
+        </button>
+      </div>
     </div>
 
-    <div class="toast" id="toast"></div>
+    <!-- RIGHT: OUTPUT -->
+    <div class="panel" style="display:flex; flex-direction:column;">
+      <div class="panel-header">
+        <div class="panel-title">
+          <i data-lucide="terminal"></i>
+          <span id="outputLabel">Generated Links</span>
+        </div>
+        <div class="stat-item">
+          <span id="linkCount">0</span>
+          <span id="linkCountLabel" style="color:var(--txt2);font-size:0.7rem;margin-left:4px;">links</span>
+        </div>
+      </div>
 
-    <script>
-        const baseURL = 'https://almdrasa.com';
-        let generatedLinks = [];
-        let history = [];
-        let currentLang = 'en';
+      <!-- Base URL Toggle -->
+      <div class="url-toggle-bar">
+        <label class="toggle-switch">
+          <input type="checkbox" id="includeBase" onchange="App.refreshDisplay()">
+          <span class="toggle-slider"></span>
+        </label>
+        <span id="baseUrlToggleLabel">Include base URL</span>
+        <span class="base-url-label">almdrasa.com</span>
+      </div>
 
-        const translations = {
-            en: {
-                mainTitle: '🔗 Educational Links Generator',
-                subtitle: 'Smart tool for creating Almdrasa course links easily and quickly',
-                basicInfoTitle: '📚 Basic Information',
-                trackLabel: 'Track',
-                courseLabel: 'Course',
-                lessonLabel: 'Section',
-                topicLabel: 'Video',
-                linkTypesTitle: '⚙️ Required Link Types',
-                generateBtn: '✨ Generate Links',
-                copyAllBtn: '📋 Copy All Links',
-                clearBtn: '🔄 Clear Data',
-                exportBtn: '💾 Export as File',
-                generatedTitle: '📋 Generated Links',
-                historyTitle: '📚 Previous History',
-                copyText: 'Copy',
-                copiedText: '✓ Copied',
-                categories: {
-                    '🏠 Home': '🏠 Home Page',
-                    '🎬 Intro': '🎬 Introduction',
-                    '🎬 Outro': '🎬 Outro',
-                    '📖 Sections': '📖 Sections',
-                    '🎥 Videos': '🎥 Videos',
-                    '📄 Summaries': '📄 Written Summaries',
-                    '❓ Short Quizzes': '❓ Short Quizzes',
-                    '✅ Section Quizzes': '✅ Section Quizzes',
-                    '🎯 Final Quizzes': '🎯 Final Quizzes',
-                    '📚 Resources': '📚 Resources',
-                    '📊 Assessments': '📊 Assessments'
-                },
-                toasts: {
-                    fillRequired: '⚠️ Please enter Track and Course at least',
-                    linkCopied: '✓ Link copied successfully',
-                    allCopied: '✓ Copied {count} links successfully',
-                    noLinks: '⚠️ No links to copy',
-                    dataCleared: '🔄 Data cleared',
-                    noLinksExport: '⚠️ No links to export',
-                    exported: '💾 Links exported successfully',
-                    loadedFromHistory: '✓ Data loaded from history'
-                }
-            },
-            ar: {
-                mainTitle: '🔗 مولد الروابط التعليمية',
-                subtitle: 'أداة ذكية لإنشاء روابط دورات المدرسة بسهولة وسرعة',
-                basicInfoTitle: '📚 المعلومات الأساسية',
-                trackLabel: 'المسار',
-                courseLabel: 'الدورة',
-                lessonLabel: 'القسم',
-                topicLabel: 'الفيديو',
-                linkTypesTitle: '⚙️ أنواع الروابط المطلوبة',
-                generateBtn: '✨ إنشاء الروابط',
-                copyAllBtn: '📋 نسخ كل الروابط',
-                clearBtn: '🔄 مسح البيانات',
-                exportBtn: '💾 تصدير كملف',
-                generatedTitle: '📋 الروابط المُنشأة',
-                historyTitle: '📚 السجل السابق',
-                copyText: 'نسخ',
-                copiedText: '✓ تم النسخ',
-                categories: {
-                    '🏠 Home': '🏠 الصفحة الرئيسية',
-                    '🎬 Intro': '🎬 المقدمة',
-                    '🎬 Outro': '🎬 الخاتمة',
-                    '📖 Sections': '📖 الأقسام',
-                    '🎥 Videos': '🎥 الفيديوهات',
-                    '📄 Summaries': '📄 المختصرات الكتابية',
-                    '❓ Short Quizzes': '❓ الاختبارات القصيرة',
-                    '✅ Section Quizzes': '✅ اختبارات الأقسام',
-                    '🎯 Final Quizzes': '🎯 الاختبارات النهائية',
-                    '📚 Resources': '📚 المصادر',
-                    '📊 Assessments': '📊 التقييمات'
-                },
-                toasts: {
-                    fillRequired: '⚠️ يرجى إدخال المسار والدورة على الأقل',
-                    linkCopied: '✓ تم نسخ الرابط بنجاح',
-                    allCopied: '✓ تم نسخ {count} رابط بنجاح',
-                    noLinks: '⚠️ لا توجد روابط لنسخها',
-                    dataCleared: '🔄 تم مسح البيانات',
-                    noLinksExport: '⚠️ لا توجد روابط للتصدير',
-                    exported: '💾 تم تصدير الروابط بنجاح',
-                    loadedFromHistory: '✓ تم تحميل البيانات من السجل'
-                }
-            }
-        };
+      <!-- Search -->
+      <div class="search-bar">
+        <div class="search-wrap">
+          <i data-lucide="search"></i>
+          <input type="text" id="searchInput" placeholder="Filter links..." oninput="App.filterLinks()">
+        </div>
+      </div>
 
-        function switchLang(lang) {
-            currentLang = lang;
-            document.documentElement.lang = lang;
-            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-            
-            // Update active button
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            // Update all text content
-            const t = translations[lang];
-            document.getElementById('mainTitle').textContent = t.mainTitle;
-            document.getElementById('subtitle').textContent = t.subtitle;
-            document.getElementById('basicInfoTitle').textContent = t.basicInfoTitle;
-            document.getElementById('trackLabel').textContent = t.trackLabel;
-            document.getElementById('courseLabel').textContent = t.courseLabel;
-            document.getElementById('lessonLabel').textContent = t.lessonLabel;
-            document.getElementById('topicLabel').textContent = t.topicLabel;
-            document.getElementById('linkTypesTitle').textContent = t.linkTypesTitle;
-            document.getElementById('generateBtn').textContent = t.generateBtn;
-            document.getElementById('copyAllBtn').textContent = t.copyAllBtn;
-            document.getElementById('clearBtn').textContent = t.clearBtn;
-            document.getElementById('exportBtn').textContent = t.exportBtn;
-            document.getElementById('generatedTitle').textContent = t.generatedTitle;
-            document.getElementById('historyTitle').textContent = t.historyTitle;
-            
-            // Update checkbox labels
-            document.querySelectorAll('.checkbox-item label').forEach(label => {
-                const key = lang === 'en' ? 'data-en' : 'data-ar';
-                if (label.hasAttribute(key)) {
-                    label.textContent = label.getAttribute(key);
-                }
-            });
-            
-                // Regenerate links if any exist
-            if (generatedLinks.length > 0) {
-                displayLinks();
-            }
-        }
+      <!-- Links output -->
+      <div id="outputBody" style="flex:1; overflow-y:auto;">
+        <div class="output-empty" id="emptyState">
+          <i data-lucide="link-2"></i>
+          <p id="emptyLabel">Fill in the fields and generate links</p>
+        </div>
+      </div>
 
-        // Real-time preview on input
-        document.querySelectorAll('input[type="text"]').forEach(input => {
-            input.addEventListener('input', (e) => {
-                // Convert to lowercase and replace spaces with dashes
-                e.target.value = e.target.value.toLowerCase().replace(/\s+/g, '-');
-                updatePreview();
-            });
-        });
+      <!-- Stats -->
+      <div class="stats-bar" id="statsBar" style="display:none;">
+        <div class="stat-item">
+          <i data-lucide="layers" style="width:12px;height:12px;"></i>
+          <span id="catCountStat">0</span>
+          <span id="catLabel">categories</span>
+        </div>
+        <div class="stat-item" style="margin-right:auto;">
+          <i data-lucide="link" style="width:12px;height:12px;"></i>
+          <strong id="totalStat">0</strong>
+          <span id="totalLabel">links total</span>
+        </div>
+        <button class="mini-btn" onclick="App.copyAll()" id="copyAllBottomBtn">
+          Copy All
+        </button>
+      </div>
+    </div>
 
-        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-            checkbox.addEventListener('change', updatePreview);
-        });
+    <!-- HISTORY (full width) -->
+    <div class="panel panel-full">
+      <div class="panel-header">
+        <div class="panel-title">
+          <i data-lucide="history"></i>
+          <span id="historyLabel">History</span>
+        </div>
+        <button class="mini-btn" onclick="App.clearHistory()" id="clearHistoryBtn">Clear</button>
+      </div>
+      <div id="historyBody">
+        <div class="history-empty" id="historyEmpty">
+          <span id="historyEmptyLabel">No history yet — generate some links</span>
+        </div>
+      </div>
+    </div>
 
-        function updatePreview() {
-            const track = document.getElementById('track').value.trim();
-            const course = document.getElementById('course').value.trim();
-            
-            if (track && course) {
-                generateLinks();
-            }
-        }
+  </div><!-- /main-grid -->
+</div><!-- /shell -->
 
-        function generateLinks() {
-            const track = document.getElementById('track').value.trim();
-            const course = document.getElementById('course').value.trim();
-            const lesson = document.getElementById('lesson').value.trim();
-            const topic = document.getElementById('topic').value.trim();
+<div class="toasts" id="toastContainer"></div>
 
-            if (!track || !course) {
-                showToast(translations[currentLang].toasts.fillRequired);
-                return;
-            }
+<!-- ===================== SCRIPT ===================== -->
+<script>
+/* ── CONFIG: single source of truth ── */
+const BASE_URL = 'https://almdrasa.com/';
 
-            generatedLinks = [];
-            const selectedTypes = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
-                .map(cb => cb.value);
+const LINK_TYPES = {
+  course: {
+    label: { en: 'Course Page', ar: 'صفحة الدورة' },
+    icon: 'book-open',
+    category: 'course',
+    requires: [],
+    build: ({ track, course }) =>
+      `tracks/${track}/courses/${course}/`
+  },
+  intro: {
+    label: { en: 'Introduction', ar: 'المقدمة' },
+    icon: 'play-circle',
+    category: 'course',
+    requires: [],
+    build: ({ track, course }) =>
+      `tracks/${track}/courses/${course}/lessons/${course}-course-introduction/`
+  },
+  outro: {
+    label: { en: 'Outro', ar: 'الخاتمة' },
+    icon: 'flag',
+    category: 'course',
+    requires: [],
+    build: ({ track, course }) =>
+      `tracks/${track}/courses/${course}/lessons/${course}-course-outro/`
+  },
+  'final-quiz': {
+    label: { en: 'Final Quiz', ar: 'الاختبار النهائي' },
+    icon: 'award',
+    category: 'course',
+    requires: [],
+    build: ({ track, course }) =>
+      `tracks/${track}/courses/${course}/quizzes/${course}-final-quiz/`
+  },
+  assessment: {
+    label: { en: 'Final Assessment', ar: 'التقييم النهائي' },
+    icon: 'clipboard-check',
+    category: 'course',
+    requires: [],
+    build: ({ track, course }) =>
+      `tracks/${track}/courses/${course}/lessons/${course}-final-assessment`
+  },
+  lesson: {
+    label: { en: 'Section Page', ar: 'صفحة القسم' },
+    icon: 'folder',
+    category: 'section',
+    requires: ['lesson'],
+    build: ({ track, course, lesson }) =>
+      `tracks/${track}/courses/${course}/lessons/${lesson}/`
+  },
+  resource: {
+    label: { en: 'Resources', ar: 'المصادر' },
+    icon: 'paperclip',
+    category: 'section',
+    requires: ['lesson'],
+    build: ({ track, course, lesson }) =>
+      `tracks/${track}/courses/${course}/lessons/${lesson}/resources/${lesson}-resource`
+  },
+  'lesson-quiz': {
+    label: { en: 'Section Quiz', ar: 'اختبار القسم' },
+    icon: 'check-square',
+    category: 'section',
+    requires: ['lesson'],
+    build: ({ track, course, lesson }) =>
+      `tracks/${track}/courses/${course}/lessons/${lesson}/quizzes/quiz-${lesson}`
+  },
+  topic: {
+    label: { en: 'Video Page', ar: 'صفحة الفيديو' },
+    icon: 'video',
+    category: 'video',
+    requires: ['lesson', 'topic'],
+    build: ({ track, course, lesson, topic }) =>
+      `tracks/${track}/courses/${course}/lessons/${lesson}/topics/${topic}`
+  },
+  summary: {
+    label: { en: 'Written Summary', ar: 'المختصر الكتابي' },
+    icon: 'file-text',
+    category: 'video',
+    requires: ['lesson', 'topic'],
+    build: ({ track, course, lesson, topic }) =>
+      `tracks/${track}/courses/${course}/lessons/${lesson}/topics/short-summary-${topic}`
+  },
+  quiz: {
+    label: { en: 'Short Quiz', ar: 'الاختبار القصير' },
+    icon: 'help-circle',
+    category: 'video',
+    requires: ['lesson', 'topic'],
+    build: ({ track, course, lesson, topic }) =>
+      `tracks/${track}/courses/${course}/lessons/${lesson}/topics/short-summary-${topic}/quizzes/short-quiz-${topic}`
+  }
+};
 
-            // Generate links based on selected types
-            selectedTypes.forEach(type => {
-                const links = generateLinksByType(type, track, course, lesson, topic);
-                if (links.length > 0) {
-                    generatedLinks.push(...links);
-                }
-            });
+const CATEGORIES = {
+  course: { label: { en: 'Course Level', ar: 'مستوى الدورة' }, icon: 'book' },
+  section: { label: { en: 'Section Level', ar: 'مستوى القسم' }, icon: 'layers' },
+  video: { label: { en: 'Video Level', ar: 'مستوى الفيديو' }, icon: 'play' }
+};
 
-            displayLinks();
-            
-            // Save to history
-            saveToHistory(track, course, lesson, topic, selectedTypes);
-        }
+/* ── TRANSLATIONS ── */
+const T = {
+  en: {
+    mainTitle: 'Links Generator',
+    subtitle: 'Almdrasa URL Builder',
+    configLabel: 'Configuration',
+    typesLabel: 'Link Types',
+    outputLabel: 'Generated Links',
+    historyLabel: 'History',
+    trackLabel: 'Track',
+    courseLabel: 'Course',
+    lessonLabel: 'Section',
+    topicLabel: 'Video',
+    optionalLabel: '(optional)',
+    kbdHint: '⌘↵ generate',
+    generateLabel: 'Generate',
+    copyAllLabel: 'Copy All',
+    exportLabel: 'Export',
+    clearLabel: 'Clear',
+    selAllBtn: 'All',
+    deselAllBtn: 'None',
+    baseUrlToggleLabel: 'Include base URL',
+    linkCountLabel: 'links',
+    catLabel: 'categories',
+    totalLabel: 'links total',
+    emptyLabel: 'Fill in the fields and generate links',
+    clearHistoryBtn: 'Clear',
+    historyEmptyLabel: 'No history yet — generate some links',
+    copyAllBottomBtn: 'Copy All',
+    searchPlaceholder: 'Filter links...',
+    toasts: {
+      fillRequired: 'Enter Track and Course first',
+      copied: 'Link copied',
+      allCopied: '{n} links copied',
+      noLinks: 'No links to copy',
+      cleared: 'Form cleared',
+      exported: 'Links exported',
+      noExport: 'No links to export',
+      historyLoaded: 'Loaded from history',
+      historyClearedMsg: 'History cleared'
+    }
+  },
+  ar: {
+    mainTitle: 'مولد الروابط',
+    subtitle: 'بانى روابط المدرسة',
+    configLabel: 'الإعدادات',
+    typesLabel: 'أنواع الروابط',
+    outputLabel: 'الروابط المُنشأة',
+    historyLabel: 'السجل',
+    trackLabel: 'المسار',
+    courseLabel: 'الدورة',
+    lessonLabel: 'القسم',
+    topicLabel: 'الفيديو',
+    optionalLabel: '(اختياري)',
+    kbdHint: '⌘↵ توليد',
+    generateLabel: 'توليد',
+    copyAllLabel: 'نسخ الكل',
+    exportLabel: 'تصدير',
+    clearLabel: 'مسح',
+    selAllBtn: 'الكل',
+    deselAllBtn: 'لا شيء',
+    baseUrlToggleLabel: 'تضمين الرابط الأساسي',
+    linkCountLabel: 'روابط',
+    catLabel: 'تصنيفات',
+    totalLabel: 'رابط',
+    emptyLabel: 'أدخل البيانات وابدأ التوليد',
+    clearHistoryBtn: 'مسح',
+    historyEmptyLabel: 'لا يوجد سجل بعد',
+    copyAllBottomBtn: 'نسخ الكل',
+    searchPlaceholder: 'فلترة الروابط...',
+    toasts: {
+      fillRequired: 'أدخل المسار والدورة أولاً',
+      copied: 'تم نسخ الرابط',
+      allCopied: 'تم نسخ {n} رابط',
+      noLinks: 'لا توجد روابط',
+      cleared: 'تم مسح النموذج',
+      exported: 'تم تصدير الروابط',
+      noExport: 'لا توجد روابط للتصدير',
+      historyLoaded: 'تم التحميل من السجل',
+      historyClearedMsg: 'تم مسح السجل'
+    }
+  }
+};
 
-        function generateLinksByType(type, track, course, lesson, topic) {
-            const links = [];
-            const baseTrackCourse = `tracks/${track}/courses/${course}`;
+/* ── STATE ── */
+const State = {
+  lang: 'en',
+  links: [],      // [{ url, category, typeId }]
+  history: JSON.parse(localStorage.getItem('alm_history') || '[]'),
 
-            switch(type) {
-                case 'course':
-                    links.push(`${baseTrackCourse}/`);
-                    break;
-                case 'intro':
-                    links.push(`${baseTrackCourse}/lessons/${course}-course-introduction/`);
-                    break;
-                case 'lesson':
-                    if (lesson) {
-                        links.push(`${baseTrackCourse}/lessons/${lesson}/`);
-                    }
-                    break;
-                case 'topic':
-                    if (lesson && topic) {
-                        links.push(`${baseTrackCourse}/lessons/${lesson}/topics/${topic}`);
-                    }
-                    break;
-                case 'summary':
-                    if (lesson && topic) {
-                        links.push(`${baseTrackCourse}/lessons/${lesson}/topics/short-summary-${topic}`);
-                    }
-                    break;
-                case 'quiz':
-                    if (lesson && topic) {
-                        links.push(`${baseTrackCourse}/lessons/${lesson}/topics/short-summary-${topic}/quizzes/short-quiz-${topic}`);
-                    }
-                    break;
-                case 'resource':
-                    if (lesson) {
-                        links.push(`${baseTrackCourse}/lessons/${lesson}/resources/${lesson}-resource`);
-                    }
-                    break;
-                case 'lesson-quiz':
-                    if (lesson) {
-                        links.push(`${baseTrackCourse}/lessons/${lesson}/quizzes/quiz-${lesson}`);
-                    }
-                    break;
-                case 'final-quiz':
-                    links.push(`${baseTrackCourse}/quizzes/${course}-final-quiz/`);
-                    break;
-                case 'outro':
-                    links.push(`${baseTrackCourse}/lessons/${course}-course-outro/`);
-                    break;
-                case 'assessment':
-                    links.push(`${baseTrackCourse}/lessons/${course}-final-assessment`);
-                    break;
-            }
+  save() {
+    localStorage.setItem('alm_history', JSON.stringify(this.history));
+  }
+};
 
-            return links;
-        }
+/* ── HELPERS ── */
+function slug(v) {
+  return v.toLowerCase().replace(/\s+/g, '-');
+}
 
-        function displayLinks() {
-            const linksContainer = document.getElementById('linksContainer');
-            linksContainer.innerHTML = '';
+function getParams() {
+  return {
+    track: slug(document.getElementById('track').value.trim()),
+    course: slug(document.getElementById('course').value.trim()),
+    lesson: slug(document.getElementById('lesson').value.trim()),
+    topic: slug(document.getElementById('topic').value.trim())
+  };
+}
 
-            // Group links by category
-            const grouped = groupLinksByCategory(generatedLinks);
-            
-            // Display grouped links
-            Object.keys(grouped).forEach(category => {
-                const translatedCategory = translations[currentLang].categories[category] || category;
-                const categoryDiv = document.createElement('div');
-                categoryDiv.className = 'link-category';
-                categoryDiv.innerHTML = `<h4>${translatedCategory}</h4>`;
-                
-                grouped[category].forEach(link => {
-                    const linkItem = document.createElement('div');
-                    linkItem.className = 'link-item';
-                    linkItem.innerHTML = `
-                        <div class="link-text">${link}</div>
-                        <button class="copy-btn" onclick="copyLink('${link}', this)">${translations[currentLang].copyText}</button>
-                    `;
-                    categoryDiv.appendChild(linkItem);
-                });
-                
-                linksContainer.appendChild(categoryDiv);
-            });
+function checkedTypes() {
+  return Array.from(document.querySelectorAll('.cb-type:checked')).map(el => el.value);
+}
 
-            document.getElementById('previewSection').style.display = 'block';
-        }
+function t(key, vars) {
+  let str = T[State.lang][key] || key;
+  if (vars) Object.entries(vars).forEach(([k,v]) => { str = str.replace(`{${k}}`, v); });
+  return str;
+}
 
-        function groupLinksByCategory(links) {
-            const grouped = {};
-            
-            links.forEach(link => {
-                let category = '🏠 Home';
-                
-                if (link.includes('/lessons/') && link.includes('-introduction')) category = '🎬 Intro';
-                else if (link.includes('/lessons/') && link.includes('-outro')) category = '🎬 Outro';
-                else if (link.includes('/lessons/') && !link.includes('/topics/') && !link.includes('/quizzes/') && !link.includes('/resources/')) category = '📖 Sections';
-                else if (link.includes('/topics/') && !link.includes('short-summary') && !link.includes('/quizzes/')) category = '🎥 Videos';
-                else if (link.includes('/topics/short-summary') && !link.includes('/quizzes/')) category = '📄 Summaries';
-                else if (link.includes('/topics/short-summary') && link.includes('/quizzes/short-quiz')) category = '❓ Short Quizzes';
-                else if (link.includes('/lessons/') && link.includes('/quizzes/quiz-')) category = '✅ Section Quizzes';
-                else if (link.includes('/quizzes/') && link.includes('final')) category = '🎯 Final Quizzes';
-                else if (link.includes('/resources/')) category = '📚 Resources';
-                else if (link.includes('/final-assessment')) category = '📊 Assessments';
-                
-                if (!grouped[category]) grouped[category] = [];
-                grouped[category].push(link);
-            });
-            
-            return grouped;
-        }
+function toastMsg(k, vars, type = 'info') {
+  const msg = T[State.lang].toasts[k] || k;
+  const final = vars ? msg.replace(/{n}/, vars.n) : msg;
+  showToast(final, type);
+}
 
-        function copyLink(link, button) {
-            navigator.clipboard.writeText(link).then(() => {
-                const originalText = button.textContent;
-                button.textContent = translations[currentLang].copiedText;
-                button.classList.add('copied');
-                
-                setTimeout(() => {
-                    button.textContent = translations[currentLang].copyText;
-                    button.classList.remove('copied');
-                }, 2000);
-                
-                showToast(translations[currentLang].toasts.linkCopied);
-            });
-        }
+/* ── TOAST ── */
+function showToast(msg, type = 'info') {
+  const icons = { success: 'check-circle', error: 'x-circle', info: 'info' };
+  const container = document.getElementById('toastContainer');
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `<i data-lucide="${icons[type]}"></i><span>${msg}</span>`;
+  container.appendChild(el);
+  lucide.createIcons({ el });
+  setTimeout(() => {
+    el.classList.add('out');
+    setTimeout(() => el.remove(), 300);
+  }, 2600);
+}
 
-        function copyAllLinks() {
-            if (generatedLinks.length === 0) {
-                showToast(translations[currentLang].toasts.noLinks);
-                return;
-            }
+/* ── URL HIGHLIGHT ── */
+function highlightURL(path, includeBase) {
+  const prefix = includeBase ? `<span class="seg-base">${BASE_URL}</span>` : '';
+  const parts = path.split('/');
+  let html = prefix;
+  let state = 'start';
+  parts.forEach((p, i) => {
+    if (!p) { html += '/'; return; }
+    const sep = i > 0 ? '/' : '';
+    if (p === 'tracks') { html += sep + p; state = 'track'; }
+    else if (state === 'track') { html += `/<span class="seg-track">${p}</span>`; state = 'courses'; }
+    else if (p === 'courses') { html += `/${p}`; state = 'course'; }
+    else if (state === 'course') { html += `/<span class="seg-course">${p}</span>`; state = 'after-course'; }
+    else if (p === 'lessons') { html += `/${p}`; state = 'lesson'; }
+    else if (state === 'lesson') { html += `/<span class="seg-lesson">${p}</span>`; state = 'after-lesson'; }
+    else if (p === 'topics') { html += `/${p}`; state = 'topic'; }
+    else if (state === 'topic') { html += `/<span class="seg-topic">${p}</span>`; state = 'after-topic'; }
+    else { html += sep + p; }
+  });
+  return html;
+}
 
-            const allLinks = generatedLinks.join('\n');
-            navigator.clipboard.writeText(allLinks).then(() => {
-                const message = translations[currentLang].toasts.allCopied.replace('{count}', generatedLinks.length);
-                showToast(message);
-            });
-        }
+/* ── BUILD CHECKBOXES (dynamic from config) ── */
+function buildCheckboxes() {
+  const params = getParams();
+  const container = document.getElementById('cbGroupsContainer');
+  const lang = State.lang;
 
-        function clearForm() {
-            document.getElementById('track').value = '';
-            document.getElementById('course').value = '';
-            document.getElementById('lesson').value = '';
-            document.getElementById('topic').value = '';
-            document.getElementById('previewSection').style.display = 'none';
-            generatedLinks = [];
-            showToast(translations[currentLang].toasts.dataCleared);
-        }
+  let html = '<div class="cb-groups">';
+  Object.entries(CATEGORIES).forEach(([catId, cat]) => {
+    const typesInCat = Object.entries(LINK_TYPES).filter(([,c]) => c.category === catId);
+    html += `<div>
+      <div class="cb-group-label">${cat.label[lang]}</div>
+      <div class="cb-row">`;
+    typesInCat.forEach(([typeId, config]) => {
+      const needLesson = config.requires.includes('lesson');
+      const needTopic = config.requires.includes('topic');
+      const disabled = (needLesson && !params.lesson) || (needTopic && !params.topic);
+      const checked = document.getElementById(`cb-${typeId}`)?.checked ?? true;
+      html += `
+        <div class="cb-chip">
+          <input type="checkbox" class="cb-type" id="cb-${typeId}" value="${typeId}"
+            ${checked ? 'checked' : ''} ${disabled ? 'disabled' : ''}>
+          <label for="cb-${typeId}">
+            <i data-lucide="${config.icon}"></i>
+            ${config.label[lang]}
+          </label>
+        </div>`;
+    });
+    html += `</div></div>`;
+  });
+  html += '</div>';
+  container.innerHTML = html;
+  lucide.createIcons({ el: container });
 
-        function exportLinks() {
-            if (generatedLinks.length === 0) {
-                showToast(translations[currentLang].toasts.noLinksExport);
-                return;
-            }
+  // re-bind checkbox change → live update
+  document.querySelectorAll('.cb-type').forEach(cb => {
+    cb.addEventListener('change', () => { if (State.links.length) App.generate(true); });
+  });
+}
 
-            const content = generatedLinks.join('\n');
-            const blob = new Blob([content], { type: 'text/plain' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `links-${Date.now()}.txt`;
-            a.click();
-            window.URL.revokeObjectURL(url);
-            
-            showToast(translations[currentLang].toasts.exported);
-        }
+/* ── LIVE URL PREVIEW ── */
+function updateURLPreview() {
+  const params = getParams();
+  const preview = document.getElementById('urlPreview');
+  if (!params.track || !params.course) { preview.classList.remove('visible'); return; }
 
-        function saveToHistory(track, course, lesson, topic, types) {
-            const entry = {
-                timestamp: Date.now(),
-                track,
-                course,
-                lesson,
-                topic,
-                types,
-                links: [...generatedLinks]
-            };
-            
-            history.unshift(entry);
-            if (history.length > 10) history = history.slice(0, 10);
-            
-            updateHistoryDisplay();
-        }
+  let path = `tracks/${params.track}/courses/${params.course}/`;
+  if (params.lesson) path += `lessons/${params.lesson}/`;
+  if (params.topic) path += `topics/${params.topic}`;
 
-        function updateHistoryDisplay() {
-            if (history.length === 0) {
-                document.getElementById('historySection').style.display = 'none';
-                return;
-            }
+  preview.innerHTML = highlightURL(path, false);
+  preview.classList.add('visible');
+}
 
-            document.getElementById('historySection').style.display = 'block';
-            const container = document.getElementById('historyContainer');
-            container.innerHTML = '';
+/* ── DISPLAY LINKS ── */
+function displayLinks() {
+  const includeBase = document.getElementById('includeBase').checked;
+  const body = document.getElementById('outputBody');
+  const emptyState = document.getElementById('emptyState');
 
-            history.forEach((entry, index) => {
-                const item = document.createElement('div');
-                item.className = 'history-item';
-                item.onclick = () => loadFromHistory(index);
-                
-                const date = new Date(entry.timestamp).toLocaleString(currentLang === 'ar' ? 'ar-EG' : 'en-US');
-                item.innerHTML = `
-                    <div class="history-item-title">
-                        ${entry.track} / ${entry.course} ${entry.lesson ? '/ ' + entry.lesson : ''}
-                    </div>
-                    <div class="history-item-info">
-                        ${date} • ${entry.links.length} ${currentLang === 'ar' ? 'رابط' : 'links'}
-                    </div>
-                `;
-                container.appendChild(item);
-            });
-        }
+  if (State.links.length === 0) {
+    body.innerHTML = '';
+    body.appendChild(emptyState);
+    emptyState.style.display = '';
+    document.getElementById('statsBar').style.display = 'none';
+    document.getElementById('linkCount').textContent = '0';
+    return;
+  }
 
-        function loadFromHistory(index) {
-            const entry = history[index];
-            document.getElementById('track').value = entry.track;
-            document.getElementById('course').value = entry.course;
-            document.getElementById('lesson').value = entry.lesson || '';
-            document.getElementById('topic').value = entry.topic || '';
-            
-            // Update checkboxes
-            document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-                cb.checked = entry.types.includes(cb.value);
-            });
-            
-            generateLinks();
-            showToast(translations[currentLang].toasts.loadedFromHistory);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+  emptyState.style.display = 'none';
 
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.classList.add('show');
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
-    </script>
+  // Group by category
+  const grouped = {};
+  State.links.forEach(link => {
+    if (!grouped[link.category]) grouped[link.category] = [];
+    grouped[link.category].push(link);
+  });
+
+  let html = '';
+  Object.entries(grouped).forEach(([catId, links]) => {
+    const cat = CATEGORIES[catId];
+    const catLabel = cat ? cat.label[State.lang] : catId;
+    const catIcon = cat ? cat.icon : 'folder';
+
+    html += `
+      <div class="link-category fade-in">
+        <div class="cat-header" onclick="toggleCat(this)">
+          <div class="cat-title">
+            <i data-lucide="${catIcon}"></i>
+            ${catLabel}
+            <span class="cat-count">${links.length}</span>
+          </div>
+          <i data-lucide="chevron-down" class="cat-chevron open"></i>
+        </div>
+        <div class="cat-body open">`;
+
+    links.forEach(link => {
+      const display = includeBase ? BASE_URL + link.url : link.url;
+      const highlighted = highlightURL(link.url, includeBase);
+      html += `
+          <div class="link-row" data-url="${display}">
+            <div class="link-url">${highlighted}</div>
+            <div class="link-actions">
+              <button class="icon-btn" title="Copy" onclick="App.copyLink(this, '${display.replace(/'/g, "\\'")}')">
+                <i data-lucide="copy"></i>
+              </button>
+              <a href="${BASE_URL}${link.url}" target="_blank" class="icon-btn" title="Open">
+                <i data-lucide="external-link"></i>
+              </a>
+            </div>
+          </div>`;
+    });
+
+    html += `</div></div>`;
+  });
+
+  body.innerHTML = html;
+  lucide.createIcons({ el: body });
+
+  // Stats
+  document.getElementById('statsBar').style.display = 'flex';
+  document.getElementById('linkCount').textContent = State.links.length;
+  document.getElementById('catCountStat').textContent = Object.keys(grouped).length;
+  document.getElementById('totalStat').textContent = State.links.length;
+
+  // Re-apply search
+  App.filterLinks();
+}
+
+function toggleCat(header) {
+  const body = header.nextElementSibling;
+  const chevron = header.querySelector('.cat-chevron');
+  body.classList.toggle('open');
+  chevron.classList.toggle('open');
+}
+
+/* ── HISTORY DISPLAY ── */
+function displayHistory() {
+  const body = document.getElementById('historyBody');
+  const empty = document.getElementById('historyEmpty');
+
+  if (State.history.length === 0) {
+    body.innerHTML = '';
+    body.appendChild(empty);
+    return;
+  }
+
+  let html = '<div class="history-list">';
+  State.history.forEach((entry, i) => {
+    const date = new Date(entry.ts).toLocaleString(State.lang === 'ar' ? 'ar-EG' : 'en-US', {
+      month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+    });
+    const subtitle = [entry.params.track, entry.params.course, entry.params.lesson]
+      .filter(Boolean).join(' / ');
+    html += `
+      <div class="history-item" onclick="App.loadHistory(${i})">
+        <div class="history-item-icon"><i data-lucide="clock"></i></div>
+        <div class="history-item-body">
+          <div class="history-item-title">${subtitle}</div>
+          <div class="history-item-meta">${date}</div>
+        </div>
+        <span class="history-item-count">${entry.links.length} links</span>
+      </div>`;
+  });
+  html += '</div>';
+  body.innerHTML = html;
+  lucide.createIcons({ el: body });
+}
+
+/* ── MAIN APP OBJECT ── */
+const App = {
+
+  generate(silent = false) {
+    const params = getParams();
+    if (!params.track || !params.course) {
+      if (!silent) {
+        document.getElementById('track').classList.add('error');
+        document.getElementById('course').classList.add('error');
+        setTimeout(() => {
+          document.getElementById('track').classList.remove('error');
+          document.getElementById('course').classList.remove('error');
+        }, 800);
+        toastMsg('fillRequired', null, 'error');
+      }
+      return;
+    }
+
+    const selected = checkedTypes();
+    State.links = [];
+
+    selected.forEach(typeId => {
+      const config = LINK_TYPES[typeId];
+      if (!config) return;
+      const missing = config.requires.some(f => !params[f]);
+      if (missing) return;
+      State.links.push({
+        url: config.build(params),
+        category: config.category,
+        typeId
+      });
+    });
+
+    displayLinks();
+
+    // Save history
+    State.history.unshift({ ts: Date.now(), params, links: State.links, types: selected });
+    if (State.history.length > 20) State.history = State.history.slice(0, 20);
+    State.save();
+    displayHistory();
+  },
+
+  refreshDisplay() {
+    displayLinks();
+  },
+
+  filterLinks() {
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    document.querySelectorAll('.link-row').forEach(row => {
+      const url = (row.dataset.url || '').toLowerCase();
+      row.classList.toggle('hidden', q.length > 0 && !url.includes(q));
+    });
+  },
+
+  copyLink(btn, url) {
+    navigator.clipboard.writeText(url).then(() => {
+      btn.classList.add('copied');
+      btn.innerHTML = '<i data-lucide="check"></i>';
+      lucide.createIcons({ el: btn });
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        btn.innerHTML = '<i data-lucide="copy"></i>';
+        lucide.createIcons({ el: btn });
+      }, 1800);
+      toastMsg('copied', null, 'success');
+    });
+  },
+
+  copyAll() {
+    if (!State.links.length) { toastMsg('noLinks', null, 'error'); return; }
+    const includeBase = document.getElementById('includeBase').checked;
+    const text = State.links.map(l => includeBase ? BASE_URL + l.url : l.url).join('\n');
+    navigator.clipboard.writeText(text).then(() => {
+      toastMsg('allCopied', { n: State.links.length }, 'success');
+    });
+  },
+
+  exportLinks() {
+    if (!State.links.length) { toastMsg('noExport', null, 'error'); return; }
+    const includeBase = document.getElementById('includeBase').checked;
+    const lines = State.links.map(l => includeBase ? BASE_URL + l.url : l.url);
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `almdrasa-links-${Date.now()}.txt`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toastMsg('exported', null, 'success');
+  },
+
+  clearForm() {
+    ['track','course','lesson','topic'].forEach(id => document.getElementById(id).value = '');
+    State.links = [];
+    displayLinks();
+    updateURLPreview();
+    buildCheckboxes();
+    toastMsg('cleared', null, 'info');
+  },
+
+  selectAllTypes() {
+    document.querySelectorAll('.cb-type:not(:disabled)').forEach(cb => cb.checked = true);
+    if (State.links.length) this.generate(true);
+  },
+
+  deselectAllTypes() {
+    document.querySelectorAll('.cb-type').forEach(cb => cb.checked = false);
+    if (State.links.length) this.generate(true);
+  },
+
+  loadHistory(i) {
+    const entry = State.history[i];
+    const { params, types } = entry;
+    ['track','course','lesson','topic'].forEach(k => {
+      document.getElementById(k).value = params[k] || '';
+    });
+    buildCheckboxes();
+    setTimeout(() => {
+      document.querySelectorAll('.cb-type').forEach(cb => {
+        cb.checked = types.includes(cb.value);
+      });
+      this.generate(true);
+    }, 50);
+    toastMsg('historyLoaded', null, 'success');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  },
+
+  clearHistory() {
+    State.history = [];
+    State.save();
+    displayHistory();
+    toastMsg('historyClearedMsg', null, 'info');
+  },
+
+  switchLang(lang, btn) {
+    State.lang = lang;
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // Update all labeled elements
+    const tMap = {
+      mainTitle: 'mainTitle', subtitle: 'subtitle', configLabel: 'configLabel',
+      typesLabel: 'typesLabel', outputLabel: 'outputLabel', historyLabel: 'historyLabel',
+      trackLabel: 'trackLabel', courseLabel: 'courseLabel', lessonLabel: 'lessonLabel',
+      topicLabel: 'topicLabel', optionalLabel: 'optionalLabel', kbdHint: 'kbdHint',
+      generateLabel: 'generateLabel', copyAllLabel: 'copyAllLabel', exportLabel: 'exportLabel',
+      clearLabel: 'clearLabel', selAllBtn: 'selAllBtn', deselAllBtn: 'deselAllBtn',
+      baseUrlToggleLabel: 'baseUrlToggleLabel', linkCountLabel: 'linkCountLabel',
+      catLabel: 'catLabel', totalLabel: 'totalLabel', emptyLabel: 'emptyLabel',
+      clearHistoryBtn: 'clearHistoryBtn', historyEmptyLabel: 'historyEmptyLabel',
+      copyAllBottomBtn: 'copyAllBottomBtn'
+    };
+
+    Object.entries(tMap).forEach(([elId, key]) => {
+      const el = document.getElementById(elId);
+      if (el && T[lang][key]) el.textContent = T[lang][key];
+    });
+
+    document.getElementById('searchInput').placeholder = T[lang].searchPlaceholder;
+
+    buildCheckboxes();
+    displayLinks();
+    displayHistory();
+  }
+};
+
+/* ── INPUT WIRING ── */
+['track','course','lesson','topic'].forEach(id => {
+  const el = document.getElementById(id);
+  el.addEventListener('input', (e) => {
+    e.target.value = e.target.value.toLowerCase().replace(/\s+/g, '-');
+    e.target.classList.toggle('has-value', !!e.target.value);
+    updateURLPreview();
+    buildCheckboxes(); // re-evaluate disabled states
+    if (State.links.length > 0) App.generate(true); // live refresh
+  });
+});
+
+/* ── KEYBOARD SHORTCUTS ── */
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); App.generate(); }
+  if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'C') { e.preventDefault(); App.copyAll(); }
+  if (e.key === 'Escape') App.clearForm();
+});
+
+/* ── INIT ── */
+document.addEventListener('DOMContentLoaded', () => {
+  lucide.createIcons();
+  buildCheckboxes();
+  displayHistory();
+  updateURLPreview();
+});
+</script>
 </body>
 </html>
